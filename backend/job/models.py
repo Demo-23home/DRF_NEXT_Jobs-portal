@@ -21,9 +21,9 @@ class Education(models.TextChoices):
 
 
 class Industry(models.TextChoices):
-    Business = "Permanent"
-    IT = "Temporary"
-    Banking = "Internship"
+    Business = "Business"
+    IT = "IT"
+    Banking = "Banking"
     Education = "Education"
     Telecommunication = "Telecommunication"
     Others = "Others"
@@ -37,33 +37,33 @@ class Experience(models.TextChoices):
 
 
 def return_date_time():
-    now = datetime.now()
+    now = datetime.datetime.now()
     date = now + datetime.timedelta(days=10)
     return date
 
 
 class Job(models.Model):
-    title = models.CharField(_(""), max_length=50)
-    description = models.TextField(_(""))
-    email = models.EmailField(_(""), max_length=254)
-    address = models.CharField(_(""), max_length=50)
+    title = models.CharField(_("Title"), max_length=50)
+    description = models.TextField(_("Description"))
+    email = models.EmailField(_("Email"), max_length=254)
+    address = models.CharField(_("Address"), max_length=50)
     job_type = models.CharField(
-        _(""), max_length=50, choices=JobTypes.choices, default=JobTypes.Permanent
+        _("Job Type"), max_length=50, choices=JobTypes.choices, default=JobTypes.Permanent
     )
     education = models.CharField(
-        _(""), max_length=50, choices=Education.choices, default=Education.Bachelors
+        _("Education"), max_length=50, choices=Education.choices, default=Education.Bachelors
     )
     industry = models.CharField(
-        _(""), max_length=50, choices=Industry.choices, default=Industry.Business
+        _("Industry"), max_length=50, choices=Industry.choices, default=Industry.Business
     )
     experience = models.CharField(
-        _(""),
+        _("Experience"),
         max_length=50,
         choices=Experience.choices,
         default=Experience.NO_EXPERIENCE,
     )
     salary = models.PositiveIntegerField(
-        _(""), default=1, validators=[MinValueValidator(1), MaxValueValidator(1000000)]
+        _("Salary"), default=1, validators=[MinValueValidator(1), MaxValueValidator(1000000)]
     )
     positions = models.PositiveIntegerField(_(""), default=1)
     company = models.CharField(_(""), max_length=50, null=True)
@@ -81,4 +81,7 @@ class Job(models.Model):
         lat = g.lat 
         
         self.point = Point(lng, lat)
-        super(Job, self).save(*args, **kwargs)
+        super(Job, self).save(*args, **kwargs)  
+        
+    def __str__(self):
+        return f"{self.title}"
