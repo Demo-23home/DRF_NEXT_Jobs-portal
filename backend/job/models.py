@@ -65,10 +65,10 @@ class Job(models.Model):
     salary = models.PositiveIntegerField(
         _("Salary"), default=1, validators=[MinValueValidator(1), MaxValueValidator(1000000)]
     )
-    positions = models.PositiveIntegerField(_(""), default=1)
-    company = models.CharField(_(""), max_length=50, null=True)
+    positions = models.PositiveIntegerField(_("Positions"), default=1)
+    company = models.CharField(_("Company"), max_length=50, null=True)
     point = gismodels.PointField(default=Point(0.0, 0.0))
-    last_date = models.DateTimeField(_(""), default=return_date_time)
+    last_date = models.DateTimeField(_("Last Date"), default=return_date_time)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
