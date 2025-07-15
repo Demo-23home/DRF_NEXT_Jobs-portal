@@ -1,8 +1,9 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import UserSerializer, SignUpSerializer
 from django.contrib.auth import get_user_model
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
@@ -21,3 +22,12 @@ def sign_up(request):
             return Response("A user with this email already exists!")
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_current_user(request): 
+    user = request.user 
+    serializer = UserSerializer(user)
+    
+    return Response(serializer.data)
