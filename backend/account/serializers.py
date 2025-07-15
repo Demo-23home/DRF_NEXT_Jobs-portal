@@ -33,7 +33,27 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    resume = serializers.CharField(source="user_profile.resume")
+    resume = serializers.CharField(source="user_profile.resume", required=False)
+
     class Meta:
         model = get_user_model()
         fields = ["username", "email", "first_name", "last_name", "resume"]
+
+    def update(self, instance, validated_data):
+        user_profile_data = validated_data.pop("user_profile", {})
+
+        password = validated_data.pop("password", None)
+        if password:
+            instance.set_password(password)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        user_profile = getattr(instance, "user_profile")
+        if user_profile and user_profile_data:
+            for attr, value in user_profile_data.items():
+                setattr(user_profile, attr, value)
+            user_profile.save()
+
+        return instance

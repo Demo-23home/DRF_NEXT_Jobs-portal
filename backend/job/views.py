@@ -1,11 +1,12 @@
 from .serializers import JobSerializer
 from .models import Job
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg, Count, Min, Max
 from .filters import JobFilter
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(["GET"])
@@ -33,8 +34,10 @@ def get_job(request, pk):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def create_job(request):
     data = request.data
+    data["user"] = request.user.id
 
     serializer = JobSerializer(data=data)
     if serializer.is_valid(raise_exception=True):
@@ -45,11 +48,15 @@ def create_job(request):
 
 
 @api_view(["PUT"])
+@permission_classes([IsAuthenticated])
 def update_job(request, pk):
     data = request.data
-
+    user = request.user
+    
     job = get_object_or_404(Job, pk=pk)
-
+    if job.user != user: 
+        return Response("You can't update this job as you aren't the owner.")
+    
     serializer = JobSerializer(instance=job, data=data, partial=True)
 
     if serializer.is_valid(raise_exception=True):
@@ -61,9 +68,12 @@ def update_job(request, pk):
 
 
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def delete_job(request, pk):
     job = get_object_or_404(Job, pk=pk)
-
+    user = request.user
+    if job.user != user: 
+        return Response("You can't delete this job as you aren't the owner.")
     try:
         job.delete()
     except Exception as e:

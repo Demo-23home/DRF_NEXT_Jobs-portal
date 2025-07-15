@@ -26,8 +26,21 @@ def sign_up(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_current_user(request): 
-    user = request.user 
+def get_current_user(request):
+    user = request.user
     serializer = UserSerializer(user)
-    
+
     return Response(serializer.data)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_user(request):
+    user = request.user
+    data = request.data
+
+    serializer = UserSerializer(user, data=data, partial=True)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        return Response({"message": serializer.data})
+    return Response(serializer.errors, status=400)

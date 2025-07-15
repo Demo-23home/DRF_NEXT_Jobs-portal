@@ -43,7 +43,7 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
-LOCAL_APPS = ["job", "account"]
+LOCAL_APPS = ["job.apps.JobConfig", "account.apps.AccountConfig"]
 
 THIRD_PARTY_APPS = [
     "django.contrib.gis",
