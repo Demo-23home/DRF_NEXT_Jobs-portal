@@ -33,6 +33,7 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    resume = serializers.CharField(source="user_profile.resume")
     class Meta:
         model = get_user_model()
-        fields = ["username", "email", "first_name", "last_name"]
+        fields = ["username", "email", "first_name", "last_name", "resume"]
