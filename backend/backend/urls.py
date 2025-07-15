@@ -22,3 +22,9 @@ urlpatterns = [
     path('jobs/',include("job.urls")),
     path('accounts/',include("account.urls")),
 ]
+
+
+
+# works only in production when debug is False, as an api only application would expect not as an html response as the django generic would be.
+handler500 = "utils.error_views.handler500" 
+handler404 = "utils.error_views.handler404"

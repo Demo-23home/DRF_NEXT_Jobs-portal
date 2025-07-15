@@ -38,7 +38,6 @@ def get_current_user(request):
 def update_user(request):
     user = request.user
     data = request.data
-
     serializer = UserSerializer(user, data=data, partial=True)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
