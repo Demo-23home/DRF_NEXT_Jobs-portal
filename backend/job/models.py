@@ -85,3 +85,10 @@ class Job(models.Model):
         
     def __str__(self):
         return f"{self.title}"
+    
+    
+class CandidatesApplied(models.Model): 
+    user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, verbose_name=_("Job"), on_delete=models.CASCADE)
+    resume = models.URLField(_("Resume"), max_length=200)
+    applied_at = models.DateTimeField(_("Applied At"), auto_now_add=True)
