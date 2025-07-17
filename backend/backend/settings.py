@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 import dotenv
 from datetime import timedelta
-
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 dotenv.read_dotenv()
@@ -51,6 +51,8 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "storages",
     "django_filters",
+    "cloudinary",
+    "cloudinary_storage",
 ]
 
 
@@ -61,7 +63,7 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "utils.custom_exception_handler.custom_exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
 }
 
 SIMPLE_JWT = {
@@ -168,3 +170,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
 GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
+
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUD_NAME"),
+    api_key=os.environ.get("API_KEY"),
+    api_secret=os.environ.get("API_SECRET"),
+    secure=os.environ.get("SECURE"),
+)

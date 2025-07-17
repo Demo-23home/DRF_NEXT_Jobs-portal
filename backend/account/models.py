@@ -8,4 +8,4 @@ User = get_user_model()
 
 class UserProfile(models.Model): 
     user = models.OneToOneField(User, verbose_name=_("User"), on_delete=models.CASCADE, related_name="user_profile")
-    resume = models.FileField(_("Resume"), upload_to=None, max_length=100, null=True)
+    resume = models.URLField(_("Resume"), null=True, blank=True, max_length=1000)

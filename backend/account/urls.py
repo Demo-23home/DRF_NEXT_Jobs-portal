@@ -10,4 +10,5 @@ urlpatterns = [
     path("verify/", TokenVerifyView.as_view(), name="verify"),
     path("user/", views.get_current_user, name="current-user"),
     path("user/update/", views.update_user, name="update-user"),
+    path("upload-resume/", views.ResumeUploader.as_view(), name="upload-resume"),
 ]

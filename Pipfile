@@ -7,7 +7,6 @@ name = "pypi"
 django = "*"
 djangorestframework = "*"
 boto3 = "*"
-django-cors-headers = "*"
 django-dotenv = "*"
 django-filter = "*"
 django-storages = "*"
@@ -17,7 +16,9 @@ gunicorn = "*"
 whitenoise = "*"
 psycopg2 = "*"
 dj-database-url = "*"
-cors-headers = "*"
+django-cors-headers = "*"
+cloudinary = "*"
+django-cloudinary-storage = "*"
 
 [dev-packages]
 
