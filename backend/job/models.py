@@ -89,6 +89,9 @@ class Job(models.Model):
     
 class CandidatesApplied(models.Model): 
     user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.CASCADE)
-    job = models.ForeignKey(Job, verbose_name=_("Job"), on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, verbose_name=_("Job"), on_delete=models.CASCADE, related_name="candidates_applied")
     resume = models.URLField(_("Resume"), max_length=200)
     applied_at = models.DateTimeField(_("Applied At"), auto_now_add=True)
+    
+    def __str__(self): 
+        return f"{self.user} is applying to {self.job} at {self.applied_at}"

@@ -1,5 +1,6 @@
-from .serializers import JobSerializer
-from .models import Job
+from datetime import timezone
+from .serializers import JobSerializer, CandidatesAppliedSerializer
+from .models import CandidatesApplied, Job
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -52,11 +53,11 @@ def create_job(request):
 def update_job(request, pk):
     data = request.data
     user = request.user
-    
+
     job = get_object_or_404(Job, pk=pk)
-    if job.user != user: 
+    if job.user != user:
         return Response("You can't update this job as you aren't the owner.")
-    
+
     serializer = JobSerializer(instance=job, data=data, partial=True)
 
     if serializer.is_valid(raise_exception=True):
@@ -72,7 +73,7 @@ def update_job(request, pk):
 def delete_job(request, pk):
     job = get_object_or_404(Job, pk=pk)
     user = request.user
-    if job.user != user: 
+    if job.user != user:
         return Response("You can't delete this job as you aren't the owner.")
     try:
         job.delete()
@@ -96,3 +97,39 @@ def get_topics_stats(request, topic):
     )
 
     return Response(stats)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def apply_to_job(request, pk):
+    user = request.user
+    job = get_object_or_404(Job, id=pk)
+
+    if not user.user_profile:
+        return Response("You have to upload your resume before applying!.", status=400)
+
+    serializer = CandidatesAppliedSerializer(
+        data={"job": job.id}, context={"request": request}
+    )
+
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        return Response({"message": "You have applied for this position"}, status=200)
+    else: 
+        return Response(serializer.errors, status=400)
+    
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_user_applications(request):
+    user = request.user 
+    
+    applications = CandidatesApplied.objects.filter(user=user)
+    
+    if not applications:
+        return Response("You didn't apply to any jobs yet!.")
+    
+    serializer = CandidatesAppliedSerializer(applications, many=True)
+    
+    return Response(serializer.data, status=200)
+    

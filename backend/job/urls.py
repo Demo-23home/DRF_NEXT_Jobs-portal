@@ -9,4 +9,6 @@ urlpatterns = [
     path("update/<int:pk>/", views.update_job, name="update-jobs"),
     path("delete/<int:pk>/", views.update_job, name="delete-jobs"),
     path("stats/<str:topic>/", views.get_topics_stats, name="stats-jobs"),
+    path("apply/<int:pk>/", views.apply_to_job, name="job-applying"),
+    path("list/applications/", views.list_user_applications, name="list-applications"),
 ]
