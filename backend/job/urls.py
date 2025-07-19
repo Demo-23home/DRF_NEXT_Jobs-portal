@@ -11,4 +11,6 @@ urlpatterns = [
     path("stats/<str:topic>/", views.get_topics_stats, name="stats-jobs"),
     path("apply/<int:pk>/", views.apply_to_job, name="job-applying"),
     path("list/applications/", views.list_user_applications, name="list-applications"),
+    path("<int:pk>/applied/", views.is_applied, name="is-applied"),
+    path("user/created/", views.user_created_jobs, name="user-jobs"),
 ]

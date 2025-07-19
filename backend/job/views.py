@@ -133,3 +133,27 @@ def list_user_applications(request):
     
     return Response(serializer.data, status=200)
     
+    
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def is_applied(request, pk): 
+    user = request.user 
+    job = get_object_or_404(Job, id=pk)
+        
+    applied = job.candidates_applied.filter(user=user).exists()
+    
+    return Response(applied)
+    
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_created_jobs(request):
+    user = request.user 
+    
+    args = {"user":user.id}
+    
+    jobs = Job.objects.filter(**args)
+    serializer = JobSerializer(jobs, many=True)
+    
+    return Response({"data": serializer.data}, status=200)
+    
