@@ -115,45 +115,60 @@ def apply_to_job(request, pk):
     if serializer.is_valid(raise_exception=True):
         serializer.save()
         return Response({"message": "You have applied for this position"}, status=200)
-    else: 
+    else:
         return Response(serializer.errors, status=400)
-    
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_user_applications(request):
-    user = request.user 
-    
+    user = request.user
+
     applications = CandidatesApplied.objects.filter(user=user)
-    
+
     if not applications:
         return Response("You didn't apply to any jobs yet!.")
-    
+
     serializer = CandidatesAppliedSerializer(applications, many=True)
-    
+
     return Response(serializer.data, status=200)
-    
-    
+
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def is_applied(request, pk): 
-    user = request.user 
+def is_applied(request, pk):
+    user = request.user
     job = get_object_or_404(Job, id=pk)
-        
+
     applied = job.candidates_applied.filter(user=user).exists()
-    
+
     return Response(applied)
-    
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_created_jobs(request):
-    user = request.user 
-    
-    args = {"user":user.id}
-    
+    user = request.user
+
+    args = {"user": user.id}
+
     jobs = Job.objects.filter(**args)
     serializer = JobSerializer(jobs, many=True)
-    
+
     return Response({"data": serializer.data}, status=200)
-    
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def candidates_applied(request, pk):
+    owner = request.user
+    job = get_object_or_404(Job, id=pk)
+
+    if not job.user == owner:
+        return Response("You aren't the owner of this job!.")
+
+    candidates = job.candidates_applied.all()
+
+    serializer = CandidatesAppliedSerializer(candidates, many=True)
+
+    return Response(serializer.data, status=200)

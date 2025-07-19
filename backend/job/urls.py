@@ -13,4 +13,5 @@ urlpatterns = [
     path("list/applications/", views.list_user_applications, name="list-applications"),
     path("<int:pk>/applied/", views.is_applied, name="is-applied"),
     path("user/created/", views.user_created_jobs, name="user-jobs"),
+    path("<int:pk>/candidates/", views.candidates_applied, name="job-candidates"),
 ]
