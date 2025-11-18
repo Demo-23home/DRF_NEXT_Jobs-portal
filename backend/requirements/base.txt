@@ -1,0 +1,54 @@
+# Django and GIS
+Django==5.2.4
+psycopg2-binary==2.9.11
+psycopg2==2.9.10 # Included as it was in your full list
+
+# Django REST Framework
+djangorestframework==3.16.1
+django-filter==25.1
+
+# JWT Auth
+djangorestframework-simplejwt==5.5.1
+PyJWT==2.9.0
+
+# Configuration / Utilities
+python-dotenv==1.0.1
+django-dotenv==1.4.2
+django-cors-headers==4.7.0
+drf-yasg==1.21.11
+
+# Cloudinary / Storage
+cloudinary==1.44.1
+django-cloudinary-storage==0.3.0
+django-storages==1.14.6
+boto3==1.39.4
+botocore==1.39.4
+s3transfer==0.13.0
+jmespath==1.0.1
+
+# Production WSGI/ASGI
+asgiref==3.9.1
+gunicorn==23.0.0
+whitenoise==6.9.0
+
+# Other Pinned Transitive/Direct Dependencies
+certifi==2025.7.9
+charset-normalizer==3.4.2
+click==8.2.1
+colorlog==6.10.1
+decorator==5.2.1
+dj-database-url==3.0.1
+future==1.0.0
+geocoder==1.38.1
+idna==3.10
+inflection==0.5.1
+packaging==25.0
+python-dateutil==2.9.0.post0
+pytz==2025.2
+PyYAML==6.0.3
+ratelim==0.1.6
+requests==2.32.4
+six==1.17.0
+sqlparse==0.5.3
+uritemplate==4.2.0
+urllib3==2.5.0

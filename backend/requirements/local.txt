@@ -1,0 +1,6 @@
+-r base.txt
+
+# Development / debugging tools
+ipython==8.17.0 # Using the specified minimum version
+django-extensions==4.1
+debugpy==1.6.7 # Using the specified minimum version
