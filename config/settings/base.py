@@ -34,6 +34,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "corsheaders",
     "storages",
+    "drf_yasg",
     "django_filters",
     "cloudinary",
     "cloudinary_storage",

@@ -17,6 +17,6 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost:8080"]
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 
-ADMIN_URL = getenv("ADMIN_URL")
-
 DOMAIN = getenv("DOMAIN")
+
+ADMIN_URL = getenv("DJANGO_ADMIN_URL")
