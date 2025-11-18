@@ -14,17 +14,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('jobs/',include("core_apps.job.urls")),
-    path('accounts/',include("core_apps.account.urls")),
+    path("api/v1/admin/", admin.site.urls),
+    path("api/v1/jobs/", include("core_apps.job.urls")),
+    path("api/v1/accounts/", include("core_apps.account.urls")),
 ]
 
 
-
 # works only in production when debug is False, as an api only application would expect not as an html response as the django generic would be.
-handler500 = "core_apps.utils.error_views.handler500" 
+handler500 = "core_apps.utils.error_views.handler500"
 handler404 = "core_apps.utils.error_views.handler404"
