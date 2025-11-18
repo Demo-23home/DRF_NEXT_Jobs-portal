@@ -90,11 +90,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": getenv("DATABASE_NAME"),
-        "USER": getenv("DATABASE_USER"),
-        "PASSWORD": getenv("DATABASE_PASSWORD"),
-        "HOST": getenv("DATABASE_HOST"),
-        "PORT": getenv("DATABASE_PORT"),
+        "NAME": getenv("POSTGRES_DB"),
+        "USER": getenv("POSTGRES_USER"),
+        "PASSWORD": getenv("POSTGRES_PASSWORD"),
+        "HOST": getenv("POSTGRES_HOST"),
+        "PORT": getenv("POSTGRES_PORT"),
     }
 }
 

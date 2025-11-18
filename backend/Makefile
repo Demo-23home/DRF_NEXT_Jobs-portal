@@ -1,3 +1,4 @@
+# Build and run containers
 build:
 	sudo docker compose -f local.yml up --build --remove-orphans
 
@@ -16,12 +17,14 @@ down:
 down-v: 
 	sudo docker compose -f local.yml down -v
 
+# Logs
 show-logs:
 	sudo docker compose -f local.yml logs -f
 
 show-logs-api:
 	sudo docker compose -f local.yml logs -f api
 
+# Django management
 makemigrations:
 	sudo docker compose -f local.yml run --rm api python manage.py makemigrations
 
@@ -34,22 +37,29 @@ collectstatic:
 superuser:
 	sudo docker compose -f local.yml run --rm api python manage.py createsuperuser
 
-db-volume:
-	sudo docker volume inspect jobbee_prod_postgres_data
-
-mailpit-volume:
-	sudo docker volume inspect jobbee__mailpit
-
-psql: 
-	sudo docker exec -it jobbe_pr_postgres psql -U jobbee_user -d jobbee_db
-
 django_shell:
 	sudo docker compose -f local.yml run --rm api python manage.py shell
 
 backend_shell: 
 	sudo docker compose -f local.yml exec api sh
 
+# Volumes inspection
+db-volume:
+	sudo docker volume inspect jobbee_postgres_data
+
+mailpit-volume:
+	sudo docker volume inspect jobbee__mailpit
+
+# Postgres CLI
+psql: 
+	sudo docker compose -f local.yml exec postgres psql -U jobbee_user -d jobbee_db
+
+# Misc
 generate_token:
 	python -c "import secrets; print(secrets.token_urlsafe(38))"
 
+# Setup shortcut
 setup: makemigrations migrate collectstatic
+
+docker_machine:
+	sudo docker compose -f local.yml exec api bash
