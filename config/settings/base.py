@@ -45,7 +45,7 @@ INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS
 
 
 REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "utils.custom_exception_handler.custom_exception_handler",
+    "EXCEPTION_HANDLER": "core_apps.utils.custom_exception_handler.custom_exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),

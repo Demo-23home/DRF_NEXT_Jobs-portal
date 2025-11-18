@@ -10,7 +10,7 @@ class JobSerializer(serializers.ModelSerializer):
 
 
 class CandidatesAppliedSerializer(serializers.ModelSerializer):
-    job = JobSerializer()
+    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all())    
     class Meta:
         model = CandidatesApplied
         fields = (

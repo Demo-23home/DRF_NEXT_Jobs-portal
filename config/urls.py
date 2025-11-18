@@ -26,5 +26,5 @@ urlpatterns = [
 
 
 # works only in production when debug is False, as an api only application would expect not as an html response as the django generic would be.
-# handler500 = "utils.error_views.handler500" 
-# handler404 = "utils.error_views.handler404"
+handler500 = "core_apps.utils.error_views.handler500" 
+handler404 = "core_apps.utils.error_views.handler404"
