@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="py-1">
       <p className="text-center mt-1">
-        Jobbee - 2021-2022, All Rights Reserved
+        Jobbee - 2025-2026, All Rights Reserved
         <a
           className="ml-4"
           rel="noreferrer"
