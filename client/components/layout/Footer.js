@@ -1,4 +1,3 @@
-"use client"; // Add this if you ever add hooks or interactivity; optional for now
 
 import React from "react";
 
