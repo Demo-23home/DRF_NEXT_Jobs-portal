@@ -36,6 +36,8 @@ services:
       - jobbee_nw
 
   client:
+    env_file:
+      - ./client/.env.local
     build:
       context: ./client
       dockerfile: ./docker/local/Dockerfile
