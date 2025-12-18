@@ -6,6 +6,7 @@ from django.contrib.gis.geos import Point
 import datetime
 from django.contrib.auth.models import User
 import geocoder, os
+from django.core.exceptions import ValidationError
 
 
 class JobTypes(models.TextChoices):
@@ -48,13 +49,22 @@ class Job(models.Model):
     email = models.EmailField(_("Email"), max_length=254)
     address = models.CharField(_("Address"), max_length=50)
     job_type = models.CharField(
-        _("Job Type"), max_length=50, choices=JobTypes.choices, default=JobTypes.Permanent
+        _("Job Type"),
+        max_length=50,
+        choices=JobTypes.choices,
+        default=JobTypes.Permanent,
     )
     education = models.CharField(
-        _("Education"), max_length=50, choices=Education.choices, default=Education.Bachelors
+        _("Education"),
+        max_length=50,
+        choices=Education.choices,
+        default=Education.Bachelors,
     )
     industry = models.CharField(
-        _("Industry"), max_length=50, choices=Industry.choices, default=Industry.Business
+        _("Industry"),
+        max_length=50,
+        choices=Industry.choices,
+        default=Industry.Business,
     )
     experience = models.CharField(
         _("Experience"),
@@ -63,7 +73,9 @@ class Job(models.Model):
         default=Experience.NO_EXPERIENCE,
     )
     salary = models.PositiveIntegerField(
-        _("Salary"), default=1, validators=[MinValueValidator(1), MaxValueValidator(1000000)]
+        _("Salary"),
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(1000000)],
     )
     positions = models.PositiveIntegerField(_("Positions"), default=1)
     company = models.CharField(_("Company"), max_length=50, null=True)
@@ -72,26 +84,42 @@ class Job(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # def save(self, *args, **kwargs):
+    #     g = geocoder.opencage(self.address, key=os.environ.get("GEOCODER_API"))
+    #     print(g)
+    #     lng = g.lng
+    #     lat = g.lat
+
+    #     self.point = Point(lng, lat)
+    #     super(Job, self).save(*args, **kwargs)
+
+    # def __str__(self):
+    #     return f"{self.title}"
 
 
-    def save(self, *args, **kwargs): 
-        g = geocoder.opencage(self.address, key=os.environ.get("GEOCODER_API"))
-        print(g)
-        lng = g.lng 
-        lat = g.lat 
-        
-        self.point = Point(lng, lat)
-        super(Job, self).save(*args, **kwargs)  
-        
-    def __str__(self):
-        return f"{self.title}"
-    
-    
-class CandidatesApplied(models.Model): 
+    def save(self, *args, **kwargs):
+        g = geocoder.opencage(
+            self.address,
+            key=os.environ.get("GEOCODER_API"),
+        )
+
+        if not g.ok or not g.lat or not g.lng:
+            raise ValidationError("Could not determine location for the given address.")
+
+        self.point = Point(g.lng, g.lat, srid=4326)
+        super().save(*args, **kwargs)
+
+
+class CandidatesApplied(models.Model):
     user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.CASCADE)
-    job = models.ForeignKey(Job, verbose_name=_("Job"), on_delete=models.CASCADE, related_name="candidates_applied")
+    job = models.ForeignKey(
+        Job,
+        verbose_name=_("Job"),
+        on_delete=models.CASCADE,
+        related_name="candidates_applied",
+    )
     resume = models.URLField(_("Resume"), max_length=200)
     applied_at = models.DateTimeField(_("Applied At"), auto_now_add=True)
-    
-    def __str__(self): 
+
+    def __str__(self):
         return f"{self.user} is applying to {self.job} at {self.applied_at}"

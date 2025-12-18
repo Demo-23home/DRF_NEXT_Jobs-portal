@@ -1,7 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import moment from "moment";
+import mapboxgl from "mapbox-gl";
+
+mapboxgl.accessToken = process.env.MAP_BOX;
 
 const JobDetails = ({ job, candidates }) => {
+  useEffect(() => {
+    // Parse the POINT string from backend: "SRID=4326;POINT (31.8144 31.4175)"
+    const coords = job.point
+      .split("(")[1]
+      .replace(")", "")
+      .split(" ")
+      .map(Number); // convert strings to numbers
+
+    const [lng, lat] = coords;
+
+    const map = new mapboxgl.Map({
+      container: "job-map",
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [lng, lat],
+      zoom: 17,
+    });
+
+    // Correct method: setLngLat
+    new mapboxgl.Marker().setLngLat([lng, lat]).addTo(map);
+  }, []); 
+
   return (
     <div className="job-details-wrapper">
       <div className="container container-fluid">
@@ -81,6 +105,7 @@ const JobDetails = ({ job, candidates }) => {
 
               <div className="job-location">
                 <h4 className="mt-5 mb-4">Job Location</h4>
+                <div id="job-map" style={{ height: 520, width: "100%" }}></div>
               </div>
             </div>
           </div>
@@ -103,10 +128,7 @@ const JobDetails = ({ job, candidates }) => {
               </p>
 
               <h5>Last Date:</h5>
-              <p>
-                {" "}
-                {job.last_date.substring(0,10)}
-              </p>
+              <p> {job.last_date.substring(0, 10)}</p>
             </div>
 
             <div className="mt-5 p-0">

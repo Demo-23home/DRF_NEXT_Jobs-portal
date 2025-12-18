@@ -2,7 +2,6 @@ import Layout from "../../components/layout/Layout";
 import axios from "axios";
 import JobDetails from "../../components/job/JobDetails";
 export default function JobDetailsPage({ job, candidates }) {
-  console.log(job, candidates);
   return (
     <Layout>
       <JobDetails job={job} candidates={candidates} />
