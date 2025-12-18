@@ -3,10 +3,10 @@ import Home from "../components/Home";
 import axios from "axios";
 
 export default function Index({ data }) {
-  console.log("data", data);
+  console.log(data)
   return (
     <Layout>
-      <Home />
+      <Home data={data} />
     </Layout>
   );
 }
@@ -22,7 +22,10 @@ export async function getServerSideProps() {
       },
     };
   } catch (error) {
-    console.error('Error fetching jobs:', error.response?.data || error.message);
+    console.error(
+      "Error fetching jobs:",
+      error.response?.data || error.message
+    );
     return {
       props: {
         data: null,

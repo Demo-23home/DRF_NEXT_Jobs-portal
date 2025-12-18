@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
 from .models import UserProfile
 
 
@@ -11,27 +10,20 @@ class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "first_name", "last_name", "email", "password"]
-
         extra_kwargs = {
-            "password": {"required": True, "min_length": 6},
-            "email": {"required": True},
-            "first_name": {"required": True},
-            "last_name": {"required": True},
+            "password": {"write_only": True, "min_length": 8},
         }
 
-    def create(self, *args, **kwargs):
-        data = self.validated_data
-        password = data.pop("password")
-
-        user = User.objects.create(
-            email=data["email"],
-            first_name=data["first_name"],
-            last_name=data["last_name"],
-            username=data["username"],
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data["username"],
+            email=validated_data["email"],
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"],
+            password=validated_data["password"],
         )
-        user.password = make_password(password)
-        user.save()
         return user
+
 
 
 class UserSerializer(serializers.ModelSerializer):

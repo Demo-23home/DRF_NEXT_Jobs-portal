@@ -54,6 +54,9 @@ mailpit-volume:
 psql: 
 	sudo docker compose -f local.yml exec postgres psql -U jobbee_user -d jobbee_db
 
+# Remove data completely
+rm-data:
+	sudo docker volume rm jobbee_postgres_data
 # Misc
 generate_token:
 	python -c "import secrets; print(secrets.token_urlsafe(38))"

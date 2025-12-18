@@ -153,3 +153,12 @@ cloudinary.config(
     api_secret=getenv("API_SECRET"),
     secure=getenv("SECURE"),
 )
+
+
+
+USE_X_FORWARDED_HOST = True
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "http")
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8080",
+]
