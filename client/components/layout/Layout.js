@@ -1,12 +1,17 @@
-
 import React from "react";
+import Head from "next/head";
 import Script from "next/script";
 import Header from "./Header";
 import Footer from "./Footer";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, title = "Jobbee Find your Job now" }) => {
   return (
     <div>
+      <Head>
+        <title>{`${title} - Jobbee`}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+
       {/* Bootstrap CSS */}
       <link
         rel="stylesheet"
