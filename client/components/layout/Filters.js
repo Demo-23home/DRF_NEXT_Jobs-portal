@@ -1,9 +1,49 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 const Filters = () => {
-  function handleClick(checkbox) {}
+  const router = useRouter();
 
-  function checkHandler(checkBoxType, checkBoxValue) {}
+  // State to store query params safely after hydration
+  const [params, setParams] = useState(new URLSearchParams());
+
+  // Hydrate query params from URL on mount + whenever router.query changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setParams(new URLSearchParams(window.location.search));
+    }
+  }, [router.query]);
+
+  // Handles checkbox selection
+  const handleClick = (checkbox) => {
+    const updatedParams = new URLSearchParams(params.toString());
+
+    // Uncheck other checkboxes in same group
+    document.getElementsByName(checkbox.name).forEach((item) => {
+      if (item !== checkbox) item.checked = false;
+    });
+
+    // Remove filter if unchecked
+    if (!checkbox.checked) {
+      updatedParams.delete(checkbox.name);
+    } else {
+      updatedParams.set(checkbox.name, checkbox.value);
+    }
+
+    setParams(updatedParams);
+
+    // Sync with URL without reloading the page
+    router.replace({
+      pathname: router.pathname,
+      query: Object.fromEntries(updatedParams.entries()),
+    });
+  };
+
+  // Returns whether a checkbox should be checked
+  const checkHandler = (name, value) => {
+    const selected = params.get(name);
+    return selected === value;
+  };
 
   return (
     <div className="sidebar mt-5">
@@ -12,240 +52,90 @@ const Filters = () => {
       <hr />
       <h5 className="filter-heading mb-3">Job Type</h5>
 
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="jobType"
-          id="check1"
-          value="Permanent"
-          defaultChecked={checkHandler("jobType", "Permanent")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check1">
-          Permanent
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="jobType"
-          id="check2"
-          value="Temporary"
-          defaultChecked={checkHandler("jobType", "Temporary")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check2">
-          Temporary
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="jobType"
-          id="check3"
-          value="Internship"
-          defaultChecked={checkHandler("jobType", "Internship")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check3">
-          Internship
-        </label>
-      </div>
+      {["Permanent", "Temporary", "Internship"].map((type, index) => (
+        <div className="form-check" key={type}>
+          <input
+            className="form-check-input"
+            type="checkbox"
+            name="job_type"
+            id={`job_type_${index}`}
+            value={type}
+            checked={checkHandler("job_type", type)}
+            onChange={(e) => handleClick(e.target)}
+          />
+          <label className="form-check-label" htmlFor={`job_type_${index}`}>
+            {type}
+          </label>
+        </div>
+      ))}
 
       <hr />
       <h5 className="mb-3">Education</h5>
 
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="education"
-          id="check4"
-          value="Bachelors"
-          defaultChecked={checkHandler("education", "Bachelors")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check4">
-          Bachelors
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="education"
-          id="check5"
-          value="Masters"
-          defaultChecked={checkHandler("education", "Masters")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check5">
-          Masters
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="education"
-          id="check6"
-          value="Phd"
-          defaultChecked={checkHandler("education", "Phd")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check6">
-          Phd
-        </label>
-      </div>
+      {["Bachelors", "Masters", "Phd"].map((level, index) => (
+        <div className="form-check" key={level}>
+          <input
+            className="form-check-input"
+            type="checkbox"
+            name="education"
+            id={`edu_${index}`}
+            value={level}
+            checked={checkHandler("education", level)}
+            onChange={(e) => handleClick(e.target)}
+          />
+          <label className="form-check-label" htmlFor={`edu_${index}`}>
+            {level}
+          </label>
+        </div>
+      ))}
 
       <hr />
-
       <h5 className="mb-3">Experience</h5>
 
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="experience"
-          id="check7"
-          value="No Experience"
-          defaultChecked={checkHandler("experience", "No Experience")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check7">
-          No Experience
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="experience"
-          id="check8"
-          value="1 Years"
-          defaultChecked={checkHandler("experience", "1 Years")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check8">
-          1 Years
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="experience"
-          id="check9"
-          value="2 Years"
-          defaultChecked={checkHandler("experience", "2 Years")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check9">
-          2 Years
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="experience"
-          id="check10"
-          value="3 Years above"
-          defaultChecked={checkHandler("experience", "3 Years above")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check10">
-          3 Year+
-        </label>
-      </div>
+      {["No Experience", "1 Years", "2 Years", "3 Years above"].map(
+        (exp, index) => (
+          <div className="form-check" key={exp}>
+            <input
+              className="form-check-input"
+              type="checkbox"
+              name="experience"
+              id={`exp_${index}`}
+              value={exp}
+              checked={checkHandler("experience", exp)}
+              onChange={(e) => handleClick(e.target)}
+            />
+            <label className="form-check-label" htmlFor={`exp_${index}`}>
+              {exp}
+            </label>
+          </div>
+        )
+      )}
 
       <hr />
       <h5 className="mb-3">Salary Range</h5>
 
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="salary"
-          id="check11"
-          value="1-50000"
-          defaultChecked={checkHandler("salary", "1-50000")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check11">
-          $1 - $50000
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="salary"
-          id="check12"
-          value="50000-100000"
-          defaultChecked={checkHandler("salary", "50000-100000")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check12">
-          $50000 - $100,000
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="salary"
-          id="check13"
-          value="100000-200000"
-          defaultChecked={checkHandler("salary", "100000-200000")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check13">
-          $100,000 - $200,000
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="salary"
-          id="defaultCheck2"
-          value="300000-500000"
-          defaultChecked={checkHandler("salary", "300000-500000")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="defaultCheck2">
-          $300,000 - $500,000
-        </label>
-      </div>
-
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="salary"
-          id="check14"
-          value="500000-1000000"
-          defaultChecked={checkHandler("salary", "500000-1000000")}
-          onClick={(e) => handleClick(e.target)}
-        />
-        <label className="form-check-label" htmlFor="check14">
-          $500,000 - $1,000,000
-        </label>
-      </div>
+      {[
+        "1-50000",
+        "50000-100000",
+        "100000-200000",
+        "300000-500000",
+        "500000-1000000",
+      ].map((range, index) => (
+        <div className="form-check" key={range}>
+          <input
+            className="form-check-input"
+            type="checkbox"
+            name="salary"
+            id={`salary_${index}`}
+            value={range}
+            checked={checkHandler("salary", range)}
+            onChange={(e) => handleClick(e.target)}
+          />
+          <label className="form-check-label" htmlFor={`salary_${index}`}>
+            ${range.replace("-", " - $")}
+          </label>
+        </div>
+      ))}
 
       <hr />
     </div>

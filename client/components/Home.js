@@ -6,11 +6,22 @@ import ReactPaginate from "react-paginate";
 import Filters from "./layout/Filters";
 
 const Home = ({ data }) => {
-  const { count, resPerPage, jobs } = data;
   const router = useRouter();
+
+  // If API returned null
+  if (!data) {
+    return (
+      <div className="container mt-5">
+        <h3 className="text-danger">Failed to load jobs. Please try again.</h3>
+      </div>
+    );
+  }
+
+  // Safe destructuring
+  const { count = 0, resPerPage = 10, jobs = [] } = data;
+
   let { key_word } = router.query;
 
-  // Ensure valid page number
   let currentPage = parseInt(router.query.page, 10);
   if (!currentPage || isNaN(currentPage)) currentPage = 1;
 
@@ -52,15 +63,17 @@ const Home = ({ data }) => {
             </div>
           </div>
 
-          {Array.isArray(jobs) &&
-            jobs.map((job) => <JobItem key={job.id} job={job} />)}
+          {jobs.length > 0 ? (
+            jobs.map((job) => <JobItem key={job.id} job={job} />)
+          ) : (
+            <p>No jobs found.</p>
+          )}
 
-          {/* Pagination */}
           {count > resPerPage && (
             <ReactPaginate
               pageCount={Math.ceil(count / resPerPage)}
               onPageChange={handlePageClick}
-              forcePage={currentPage - 1} // ZERO based index
+              forcePage={currentPage - 1}
               previousLabel="Prev"
               nextLabel="Next"
               breakLabel="..."
