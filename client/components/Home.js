@@ -3,6 +3,7 @@ import JobItem from "./job/JobItem";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import ReactPaginate from "react-paginate";
+import Filters from "./layout/Filters";
 
 const Home = ({ data }) => {
   const { count, resPerPage, jobs } = data;
@@ -13,9 +14,8 @@ const Home = ({ data }) => {
   let currentPage = parseInt(router.query.page, 10);
   if (!currentPage || isNaN(currentPage)) currentPage = 1;
 
-  // Handle page change
   const handlePageClick = ({ selected }) => {
-    const newPage = selected + 1; // react-paginate is zero-based
+    const newPage = selected + 1;
 
     router.push({
       pathname: router.pathname,
@@ -29,7 +29,9 @@ const Home = ({ data }) => {
   return (
     <div className="container container-fluid">
       <div className="row">
-        <div className="col-xl-3 col-lg-4">{/* <Filters /> */}</div>
+        <div className="col-xl-3 col-lg-4">
+          <Filters />
+        </div>
 
         <div className="col-xl-9 col-lg-8 content-left-offset">
           <div className="my-5">
