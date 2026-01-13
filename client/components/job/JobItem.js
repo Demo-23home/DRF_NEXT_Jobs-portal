@@ -25,7 +25,7 @@ const JobItem = ({ job }) => {
           </li>
           <li>
             <i className="fas fa-briefcase" aria-hidden="true"></i>{" "}
-            {job.jobType}
+            {job.job_type}
           </li>
           <li>
             <i className="fas fa-money-check-alt" aria-hidden="true"></i>{" "}

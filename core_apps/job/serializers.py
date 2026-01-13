@@ -7,6 +7,12 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = "__all__"
+    
+    def create(self, validated_data):
+        user = self.context["request"].user
+        return Job.objects.create(user=user, **validated_data)
+        
+        
 
 
 class CandidatesAppliedSerializer(serializers.ModelSerializer):

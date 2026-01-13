@@ -8,6 +8,7 @@ from django.db.models import Avg, Count, Min, Max
 from .filters import JobFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 
 
 @api_view(["GET"])
@@ -40,14 +41,36 @@ def get_job(request, pk):
 @permission_classes([IsAuthenticated])
 def create_job(request):
     data = request.data
-    data["user"] = request.user.id
+    # If multiple jobs are sent
+    if isinstance(data, list):
+        created_jobs = []
+        errors = []
+        for i, item in enumerate(data):
+            serializer = JobSerializer(data=item, context={"request": request})
+            if serializer.is_valid():
+                serializer.save()
+                created_jobs.append(serializer.data)
+            else:
+                errors.append({"index": i, "errors": serializer.errors})
+        if errors:
+            return Response(
+                {"created": created_jobs, "errors": errors},
+                status=status.HTTP_207_MULTI_STATUS,
+            )
+        return Response({"created": created_jobs}, status=status.HTTP_201_CREATED)
+    # If a single job is sent
+    elif isinstance(data, dict):
+        serializer = JobSerializer(data=data, context={"request": request})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    serializer = JobSerializer(data=data)
-    if serializer.is_valid(raise_exception=True):
-        serializer.save()
-        return Response(serializer.data)
     else:
-        return Response(serializer.errors)
+        return Response(
+            {"error": "Invalid data format. Must be an object or list of objects."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 @api_view(["PUT"])

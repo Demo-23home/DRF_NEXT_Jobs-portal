@@ -38,7 +38,7 @@ superuser:
 	sudo docker compose -f local.yml run --rm api python manage.py createsuperuser
 
 django_shell:
-	sudo docker compose -f local.yml run --rm api python manage.py shell
+	sudo docker compose -f local.yml run --rm api python manage.py shell_plus
 
 backend_shell: 
 	sudo docker compose -f local.yml exec api sh

@@ -84,18 +84,8 @@ class Job(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # def save(self, *args, **kwargs):
-    #     g = geocoder.opencage(self.address, key=os.environ.get("GEOCODER_API"))
-    #     print(g)
-    #     lng = g.lng
-    #     lat = g.lat
-
-    #     self.point = Point(lng, lat)
-    #     super(Job, self).save(*args, **kwargs)
-
-    # def __str__(self):
-    #     return f"{self.title}"
-
+    def __str__(self): 
+        return f"{self.title} 'position' on {self.address}"
 
     def save(self, *args, **kwargs):
         g = geocoder.opencage(

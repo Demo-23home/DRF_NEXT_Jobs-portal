@@ -3,7 +3,7 @@ import Home from "../components/Home";
 import axios from "axios";
 
 export default function Index({ data }) {
-  console.log(data)
+  console.log(data);
   return (
     <Layout>
       <Home data={data} />
@@ -11,9 +11,13 @@ export default function Index({ data }) {
   );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ query }) {
   try {
-    const res = await axios.get(`${process.env.API_URL}/jobs/`);
+    const params = {};
+    if (query.key_word) params.key_word = query.key_word;
+    if (query.location) params.location = query.location;
+
+    const res = await axios.get(`${process.env.API_URL}/jobs/`, {params});
     const data = res.data;
 
     return {
