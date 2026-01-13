@@ -16,8 +16,9 @@ export async function getServerSideProps({ query }) {
     const params = {};
     if (query.key_word) params.key_word = query.key_word;
     if (query.location) params.location = query.location;
+    if (query.page) params.page = query.page;
 
-    const res = await axios.get(`${process.env.API_URL}/jobs/`, {params});
+    const res = await axios.get(`${process.env.API_URL}/jobs/`, { params });
     const data = res.data;
 
     return {
