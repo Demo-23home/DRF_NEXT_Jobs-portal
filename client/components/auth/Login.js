@@ -1,21 +1,17 @@
 import Image from "next/image";
-import React, { useEffect } from "react";
-import { useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import AuthContext from "../../context/AuthContext";
 
-
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const { loading, error, isAuthenticated } = useContext(AuthContext);
+  const { loading, error, isAuthenticated, login } = useContext(AuthContext);
 
   useEffect(() => {
-    if (error) {
-      console.log(error);
-    }
+    if (error) console.log(error);
     if (isAuthenticated && !loading) {
       router.push("/");
     }
@@ -23,8 +19,7 @@ const Login = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(email)
-    console.log(password)
+    login({ username, password }); 
   };
 
   return (
@@ -43,17 +38,16 @@ const Login = () => {
             <form className="form" onSubmit={submitHandler}>
               <div className="inputWrapper">
                 <div className="inputBox">
-                  <i aria-hidden className="fas fa-envelope"></i>
+                  <i aria-hidden className="fas fa-user"></i>
                   <input
-                    type="email"
-                    placeholder="Enter Your Email"
+                    type="text"
+                    placeholder="Enter Your Username"
                     required
-                    value={email}
-                    pattern="\S+@\S+\.\S+"
-                    title="Your Email is Invalid"
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
+
                 <div className="inputBox">
                   <i aria-hidden className="fas fa-key"></i>
                   <input
@@ -65,12 +59,14 @@ const Login = () => {
                   />
                 </div>
               </div>
+
               <div className="loginButtonWrapper">
                 <button type="submit" className="loginButton">
                   {loading ? "Authenticating..." : "Login"}
                 </button>
               </div>
-              <p style={{ textDecoration: "none" }} className="signup">
+
+              <p className="signup">
                 New to Jobbee? <a href="/register">Create an account</a>
               </p>
             </form>
