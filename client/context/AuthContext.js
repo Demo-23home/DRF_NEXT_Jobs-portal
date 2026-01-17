@@ -1,4 +1,4 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 
@@ -11,6 +11,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      loadUser();
+    }
+  }, [user]);
 
   const login = async ({ username, password }) => {
     setError(null);
@@ -30,6 +36,7 @@ export const AuthProvider = ({ children }) => {
 
       // If token returned → login success
       if (res.data.access) {
+        loadUser();
         setIsAuthenticated(true);
         setLoading(false);
         router.push("/");
@@ -37,17 +44,34 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
         setError("Invalid Credentials");
       }
-
     } catch (err) {
       setLoading(false);
-      const message =
-        err.response?.data?.error ||
-        err.response?.data?.detail ||
-        "Login failed";
-
+      const message = err.response?.data?.error;
       setError(message);
 
       console.log("LOGIN ERROR:", err.response?.data);
+    }
+  };
+
+  const loadUser = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("/api/auth/user");
+      if (res.data.user) {
+        setIsAuthenticated(true);
+        setLoading(false);
+        setUser(res.data.user);
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+      setLoading(false);
+      setUser(null);
+      setError(
+        error.response &&
+          (error.response.data.message ||
+            error.response.data.detail ||
+            error.response.data.error)
+      );
     }
   };
 
