@@ -3,6 +3,8 @@ import Head from "next/head";
 import Script from "next/script";
 import Header from "./Header";
 import Footer from "./Footer";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Layout = ({ children, title = "Jobbee Find your Job now" }) => {
   return (
@@ -38,8 +40,8 @@ const Layout = ({ children, title = "Jobbee Find your Job now" }) => {
         strategy="afterInteractive"
         crossOrigin="anonymous"
       />
+      <ToastContainer position="bottom-right"/>
 
-      {/* Layout */}
       <Header />
       {children}
       <Footer />

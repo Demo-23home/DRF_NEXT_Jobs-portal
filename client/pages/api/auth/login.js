@@ -47,15 +47,11 @@ export default async function handler(req, res) {
       access: token,
       message: "Login successful",
     });
-
   } catch (error) {
-    console.log("API ERROR:", error.response?.data);
+    console.log("API ERROR:", error.response?.data.message);
 
     return res.status(error.response?.status || 500).json({
-      error:
-        error.response?.data?.error ||
-        error.response?.data?.detail ||
-        "Server error",
+      error: error.response?.data?.message,
     });
   }
 }
