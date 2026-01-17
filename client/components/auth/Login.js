@@ -5,14 +5,19 @@ import AuthContext from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
 const Login = () => {
-  const [username, setUsername] = useState(""); 
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const { loading, error, isAuthenticated, login } = useContext(AuthContext);
+  const { loading, error, isAuthenticated, login, clearErrors } =
+    useContext(AuthContext);
 
   useEffect(() => {
-    if (error) toast.error  (error);
+    if (error) {
+      toast.error(error);
+      clearErrors();
+    }
+
     if (isAuthenticated && !loading) {
       router.push("/");
     }
@@ -20,7 +25,7 @@ const Login = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    login({ username, password }); 
+    login({ username, password });
   };
 
   return (

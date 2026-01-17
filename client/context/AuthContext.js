@@ -18,6 +18,45 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
+  //? Register User
+  const register = async ({
+    first_name,
+    last_name,
+    email,
+    username,
+    password,
+  }) => {
+    setError(null);
+    setLoading(true);
+
+    if (!username || !password || !email || !first_name || !last_name) {
+      setError("Make sure to fill all the data, all are required!");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await axios.post(`${process.env.API_URL}/accounts/signup/`, {
+        first_name,
+        last_name,
+        email,
+        username,
+        password,
+      });
+
+      //* If token returned → login success
+      if (res.data.username) {
+        setLoading(false);
+        router.push("/login");
+      }
+    } catch (err) {
+      setLoading(false);
+      const message = err.response?.data?.error;
+      setError(message);
+
+      console.log("LOGIN ERROR:", err.response?.data);
+    }
+  };
   //? Login User
   const login = async ({ username, password }) => {
     setError(null);
@@ -77,7 +116,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-    //? Logout User
+  //? Logout User
   const logout = async () => {
     try {
       const res = await axios.post("/api/auth/logout");
@@ -98,6 +137,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  //? Clear Errors
+  const clearErrors = () => {
+    setError(null);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -105,8 +149,10 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         error,
         user,
+        register,
         login,
         logout,
+        clearErrors,
       }}
     >
       {children}
