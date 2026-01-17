@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
     if (!access) {
       return res.status(401).json({
-        error: "Login First to load user",
+        message: "Login First to load user",
       });
     }
 

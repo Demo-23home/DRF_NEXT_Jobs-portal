@@ -3,14 +3,17 @@ import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import AuthContext from "../../context/AuthContext";
 import { toast } from "react-toastify";
-import Link from "next/link";
 
-const Login = () => {
+const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+
   const router = useRouter();
 
-  const { loading, error, isAuthenticated, login, clearErrors } =
+  const { loading, error, isAuthenticated, register, clearErrors } =
     useContext(AuthContext);
 
   useEffect(() => {
@@ -26,7 +29,7 @@ const Login = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    login({ username, password });
+    register({ username, password, first_name, last_name, email });
   };
 
   return (
@@ -34,16 +37,49 @@ const Login = () => {
       <div className="modalWrapper">
         <div className="left">
           <div style={{ width: "100%", height: "100%", position: "relative" }}>
-            <Image src="/images/login.svg" alt="login" layout="fill" />
+            <Image src="/images/signup.svg" alt="register" layout="fill" />
           </div>
         </div>
         <div className="right">
           <div className="rightContentWrapper">
             <div className="headerWrapper">
-              <h2> LOGIN</h2>
+              <h2> SIGN UP</h2>
             </div>
             <form className="form" onSubmit={submitHandler}>
               <div className="inputWrapper">
+                <div className="inputBox">
+                  <i aria-hidden className="fas fa-user"></i>
+                  <input
+                    type="text"
+                    placeholder="Enter First Name"
+                    required
+                    value={first_name}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </div>
+
+                <div className="inputBox">
+                  <i aria-hidden className="fas fa-user-tie"></i>
+                  <input
+                    type="text"
+                    placeholder="Enter Last name"
+                    required
+                    value={last_name}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+
+                <div className="inputBox">
+                  <i aria-hidden className="fas fa-envelope"></i>
+                  <input
+                    type="email"
+                    placeholder="Enter Your Email"
+                    required
+                    value={email}
+                    pattern="\S+@\S+\.\S+"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
                 <div className="inputBox">
                   <i aria-hidden className="fas fa-user"></i>
                   <input
@@ -54,7 +90,6 @@ const Login = () => {
                     onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
-
                 <div className="inputBox">
                   <i aria-hidden className="fas fa-key"></i>
                   <input
@@ -63,19 +98,15 @@ const Login = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    minLength={6}
                   />
                 </div>
               </div>
-
-              <div className="loginButtonWrapper">
-                <button type="submit" className="loginButton">
-                  {loading ? "Authenticating..." : "Login"}
+              <div className="registerButtonWrapper">
+                <button type="submit" className="registerButton">
+                  {loading ? "Loading..." : "Register"}
                 </button>
               </div>
-
-              <p className="signup">
-                New to Jobbee? <Link href="/register">Create an account</Link>
-              </p>
             </form>
           </div>
         </div>
@@ -84,4 +115,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

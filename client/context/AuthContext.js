@@ -13,10 +13,11 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
+    const publicPaths = ["/login", "/register"];
+    if (!user && !publicPaths.includes(router.pathname)) {
       loadUser();
     }
-  }, [user]);
+  }, [user, router.pathname]);
 
   //? Register User
   const register = async ({
@@ -29,14 +30,8 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     setLoading(true);
 
-    if (!username || !password || !email || !first_name || !last_name) {
-      setError("Make sure to fill all the data, all are required!");
-      setLoading(false);
-      return;
-    }
-
     try {
-      const res = await axios.post(`${process.env.API_URL}/accounts/signup/`, {
+      const res = await axios.post("/api/auth/register", {
         first_name,
         last_name,
         email,
@@ -44,19 +39,23 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
-      //* If token returned → login success
-      if (res.data.username) {
+      console.log("REGISTER RESPONSE:", res.data); 
+
+      if (res.data?.user) {
         setLoading(false);
-        router.push("/login");
+        router.push("/login"); 
+      } else {
+        setLoading(false);
+        setError("Registration succeeded but response unexpected.");
       }
     } catch (err) {
       setLoading(false);
-      const message = err.response?.data?.error;
+      const message = err.response?.data?.error || "Something went wrong";
       setError(message);
-
-      console.log("LOGIN ERROR:", err.response?.data);
+      console.log("REGISTER ERROR:", err.response?.data || err.message);
     }
   };
+
   //? Login User
   const login = async ({ username, password }) => {
     setError(null);
