@@ -53,7 +53,7 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/user" className="dropdown-item">
+                  <Link href="/profile" className="dropdown-item">
                     Profile
                   </Link>
                 </li>
