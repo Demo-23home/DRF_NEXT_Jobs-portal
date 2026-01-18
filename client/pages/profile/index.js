@@ -3,10 +3,10 @@ import Layout from "../../components/layout/Layout";
 import UpdateProfile from "../../components/user/UpdateProfile";
 import IsAuthenticated from "../../utils/IsAuthenticated";
 
-export default function UpdateProfilePage() {
+export default function UpdateProfilePage({access_token}) {
   return (
     <Layout title="UpdateProfile">
-      <UpdateProfile />
+      <UpdateProfile access_token={access_token} />
     </Layout>
   );
 }
@@ -21,7 +21,7 @@ export async function getServerSideProps({ req }) {
       redirect: {
         destination: "/login",
         permanent: false,
-      }, 
+      },
     };
   }
   return {

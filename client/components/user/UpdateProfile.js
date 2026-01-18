@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import AuthContext from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
-const UpdateProfile = () => {
+const UpdateProfile = ({ access_token }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [first_name, setFirstName] = useState("");
@@ -13,24 +13,45 @@ const UpdateProfile = () => {
 
   const router = useRouter();
 
-  const { loading, error, user, clearErrors } = useContext(AuthContext);
+  const {
+    updated,
+    setUpdated,
+    loading,
+    error,
+    user,
+    clearErrors,
+    updateProfile,
+  } = useContext(AuthContext);
 
   useEffect(() => {
+    // Populate form fields when user is loaded
     if (user) {
-      setEmail(user.email);
-      setUsername(user.username);
-      setFirstName(user.first_name);
-      setLastName(user.last_name);
+      setEmail(user.email || "");
+      setUsername(user.username || "");
+      setFirstName(user.first_name || "");
+      setLastName(user.last_name || "");
     }
+
+    if (updated) {
+      setUpdated(false);
+      toast.success("Profile updated successfully!");
+      setTimeout(() => {
+        router.reload();
+      }, 1000);
+    }
+    
     if (error) {
       toast.error(error);
       clearErrors();
     }
-  }, [error, loading]);
+  }, [user, updated, error]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    // register({ username, password, first_name, last_name, email });
+    updateProfile(
+      { username, password, first_name, last_name, email },
+      access_token,
+    );
   };
 
   return (
@@ -96,7 +117,6 @@ const UpdateProfile = () => {
                   <input
                     type="password"
                     placeholder="Enter Your Password"
-                    required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     minLength={6}

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import UserProfile
-
+from rest_framework.validators import UniqueValidator
 
 User = get_user_model()
 
@@ -25,9 +25,13 @@ class SignUpSerializer(serializers.ModelSerializer):
         return user
 
 
-
 class UserSerializer(serializers.ModelSerializer):
     resume = serializers.CharField(source="user_profile.resume", required=False)
+
+    email = serializers.EmailField(
+        required=True,
+        validators=[UniqueValidator(queryset=get_user_model().objects.all(), message="Email must be unique!")],
+    )
 
     class Meta:
         model = get_user_model()
@@ -54,7 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    class Meta: 
+    class Meta:
         model = UserProfile
         fields = ["user", "resume"]
         read_only_fields = ["resume"]

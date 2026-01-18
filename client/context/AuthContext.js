@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext, useEffect, useActionState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 
@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
+  const [updated, setUpdated] = useState(null);
 
   const router = useRouter();
 
@@ -39,11 +40,9 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
-      console.log("REGISTER RESPONSE:", res.data); 
-
       if (res.data?.user) {
         setLoading(false);
-        router.push("/login"); 
+        router.push("/login");
       } else {
         setLoading(false);
         setError("Registration succeeded but response unexpected.");
@@ -52,7 +51,50 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       const message = err.response?.data?.error || "Something went wrong";
       setError(message);
-      console.log("REGISTER ERROR:", err.response?.data || err.message);
+    }
+  };
+
+  //? Update User's Profile
+  const updateProfile = async (
+    { username, email, first_name, last_name, password },
+    access_token,
+  ) => {
+    setLoading(true);
+
+    try {
+      const res = await axios.put(
+        `/api/user/update/`,
+        { username, email, first_name, last_name, password },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (res.data) {
+        setUser(res.data);
+        setUpdated(true);
+      }
+    } catch (err) {
+      let message = "Something went wrong";
+
+      if (err.response?.data) {
+        const data = err.response.data;
+
+        if (typeof data === "object") {
+          message = Object.values(data)
+            .map((msgs) => (Array.isArray(msgs) ? msgs.join(", ") : msgs))
+            .join("\n");
+        } else if (typeof data === "string") {
+          message = data;
+        }
+      }
+
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,7 +152,7 @@ export const AuthProvider = ({ children }) => {
         error.response &&
           (error.response.data.message ||
             error.response.data.detail ||
-            error.response.data.error)
+            error.response.data.error),
       );
     }
   };
@@ -131,7 +173,7 @@ export const AuthProvider = ({ children }) => {
         error.response &&
           (error.response.data.message ||
             error.response.data.detail ||
-            error.response.data.error)
+            error.response.data.error),
       );
     }
   };
@@ -149,6 +191,9 @@ export const AuthProvider = ({ children }) => {
         error,
         user,
         register,
+        updated,
+        setUpdated,
+        updateProfile,
         login,
         logout,
         clearErrors,

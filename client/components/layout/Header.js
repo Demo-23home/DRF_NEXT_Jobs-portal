@@ -36,7 +36,7 @@ const Header = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Hi, {user.first_name}
+                Hi, {user?.first_name || (loading ? "Loading..." : "Guest")}
               </button>
               <ul
                 className="dropdown-menu"
