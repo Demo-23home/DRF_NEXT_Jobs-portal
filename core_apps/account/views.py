@@ -9,7 +9,6 @@ from rest_framework.views import APIView
 import cloudinary
 from rest_framework.parsers import MultiPartParser, FormParser
 import os
-from .serializers import ProfileSerializer
 from rest_framework.exceptions import ValidationError
 
 User = get_user_model()
@@ -38,7 +37,6 @@ def get_current_user(request):
     serializer = UserSerializer(user)
 
     return Response(serializer.data)
-
 
 
 @api_view(["PUT"])
@@ -82,8 +80,16 @@ class ResumeUploader(APIView):
         try:
             username = request.user.username
             result = cloudinary.uploader.upload(
-                file, source_type="raw", public_id=f"{username}_resume", overwrite=True, type="upload"
+                file,
+                resource_type="raw",
+                folder="resumes",
+                public_id=f"{username}_resume",
+                overwrite=True,
+                access_mode="public",
+                type="upload",
+                invalidate=True,
             )
+
             profile = request.user.user_profile
             profile.resume = result["secure_url"]
             profile.save()
