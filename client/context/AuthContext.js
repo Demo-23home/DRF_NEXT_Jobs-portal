@@ -103,27 +103,23 @@ export const AuthProvider = ({ children }) => {
   const uploadResume = async (formData, access_token) => {
     try {
       setLoading(true);
-      const res = await axios.post(
-        "/api/user/upload_resume",
-        { formData },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        },
-      );
-      if (res.data) {
-        setLoading(false);
-        setUploaded(true);
-      }
-    } catch (err) {
-      setLoading(false);
-      const message = err.response?.data?.error;
-      setError(message);
 
-      console.log("LOGIN ERROR:", err.response?.data);
+      const res = await axios.post("/api/user/upload_resume", formData, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setUploaded(true);
+    } catch (err) {
+      const message = err.response?.data?.error || "Failed to upload resume";
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   };
+
   //? Login User
   const login = async ({ username, password }) => {
     setError(null);
