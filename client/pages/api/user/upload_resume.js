@@ -40,7 +40,7 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: "Unauthorized" });
       }
 
-      const backendUrl = `${process.env.API_URL}/accounts/upload-resume/`;
+      const backendUrl = `${process.env.NEXT_PUBLIC_API_URL}/accounts/upload-resume/`;
 
       const formData = new FormData();
       formData.append(

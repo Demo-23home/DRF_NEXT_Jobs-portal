@@ -3,7 +3,7 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
       const response = await axios.post(
-        `${process.env.API_URL}/accounts/signup/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/accounts/signup/`,
         req.body
       );
 

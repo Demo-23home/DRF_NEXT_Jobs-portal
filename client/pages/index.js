@@ -33,7 +33,7 @@ export async function getServerSideProps({ query }) {
     if (query.job_type) params.job_type = query.job_type;
     if (query.experience) params.experience = query.experience;
 
-    const res = await axios.get(`${process.env.API_URL}/jobs/`, { params });
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobs/`, { params });
     const data = res.data;
 
     return {

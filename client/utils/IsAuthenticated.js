@@ -3,7 +3,7 @@ import axios from "axios";
 const IsAuthenticatedUser = async (access_token) => {
   try {
     const response = await axios.post(
-      `${process.env.API_URL}/accounts/verify/`,
+      `${process.env.NEXT_PUBLIC_API_URL}/accounts/verify/`,
       { token: access_token },
     );
 

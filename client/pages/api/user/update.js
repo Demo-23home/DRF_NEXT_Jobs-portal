@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   if (req.method === "PUT") {
     try {
       const response = await axios.put(
-        `${process.env.API_URL}/accounts/user/update/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/accounts/user/update/`,
         req.body,
         {
           headers: {

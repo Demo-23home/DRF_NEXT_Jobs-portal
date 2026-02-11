@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   try {
     // Send credentials to Django backend
     const response = await axios.post(
-      `${process.env.API_URL}/accounts/login/`,
+      `${process.env.NEXT_PUBLIC_API_URL}/accounts/login/`,
       { username, password },
       {
         headers: { "Content-Type": "application/json" },

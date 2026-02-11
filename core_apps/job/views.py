@@ -137,9 +137,17 @@ def apply_to_job(request, pk):
         data={"job": job.id}, context={"request": request}
     )
 
+    already_applied = job.candidates_applied.filter(user=user).exists()
+
+    if already_applied:
+        return Response(
+            {"error": "you have already applied for this position"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     if serializer.is_valid(raise_exception=True):
         serializer.save()
-        return Response({"message": "You have applied for this position"}, status=200)
+        return Response({"applied": True, "job_id": job.id}, status=200)
     else:
         return Response(serializer.errors, status=400)
 

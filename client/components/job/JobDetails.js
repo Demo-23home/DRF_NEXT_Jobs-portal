@@ -1,10 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import moment from "moment";
 import mapboxgl from "mapbox-gl";
+import JobContext from "../../context/JobContext";
+import { toast } from "react-toastify";
 
 mapboxgl.accessToken = process.env.MAP_BOX;
 
-const JobDetails = ({ job, candidates }) => {
+const JobDetails = ({ job, candidates, access_token }) => {
+  const { applyToJob, applied, clearErrors, error, loading } =
+    useContext(JobContext);
+
   useEffect(() => {
     // Parse the POINT string from backend: "SRID=4326;POINT (31.8144 31.4175)"
     const coords = job.point
@@ -24,7 +29,16 @@ const JobDetails = ({ job, candidates }) => {
 
     // Correct method: setLngLat
     new mapboxgl.Marker().setLngLat([lng, lat]).addTo(map);
-  }, []); 
+
+    if (error) {
+      toast.error(error);
+      clearErrors();
+    }
+  }, [error]);
+
+  const applyToJobHandler = () => {
+    applyToJob(job.id);
+  };
 
   return (
     <div className="job-details-wrapper">
@@ -45,9 +59,24 @@ const JobDetails = ({ job, candidates }) => {
 
                 <div className="mt-3">
                   <span>
-                    <button className="btn btn-primary px-4 py-2 apply-btn">
-                      Apply Now
-                    </button>
+                    {loading ? (
+                      "Loading..."
+                    ) : applied ? (
+                      <button
+                        disabled
+                        className="btn btn-success px-4 py-2 apply-btn"
+                      >
+                        <i aria-hidden className="fas fa-check"></i>
+                        {loading ? "Loading" : "Apply Now"}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={applyToJobHandler}
+                        className="btn btn-primary px-4 py-2 apply-btn"
+                      >
+                        {loading ? "Loading..." : "Apply Now"}
+                      </button>
+                    )}
                     <span className="ml-4 text-success">
                       <b>{candidates}</b> candidates has applied to this job.
                     </span>

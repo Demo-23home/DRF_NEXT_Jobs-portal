@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     try {
       // Send credentials to Django backend
       const response = await axios.get(
-        `${process.env.API_URL}/accounts/user/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/accounts/user/`,
         {
           headers: { Authorization: `Bearer ${access}` },
         }

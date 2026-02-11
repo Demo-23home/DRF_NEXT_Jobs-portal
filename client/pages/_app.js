@@ -3,6 +3,7 @@ import "../styles/globals.css";
 
 import { useEffect } from "react";
 import { AuthProvider } from "../context/AuthContext";
+import { JobProvider } from "../context/JobContext";
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
@@ -11,7 +12,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <AuthProvider>
-      <Component {...pageProps} />
+      <JobProvider>
+        <Component {...pageProps} />
+      </JobProvider>
     </AuthProvider>
   );
 }
