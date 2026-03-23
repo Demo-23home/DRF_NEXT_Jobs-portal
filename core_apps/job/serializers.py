@@ -7,16 +7,15 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = "__all__"
-    
+
     def create(self, validated_data):
         user = self.context["request"].user
         return Job.objects.create(user=user, **validated_data)
-        
-        
 
 
 class CandidatesAppliedSerializer(serializers.ModelSerializer):
-    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all())    
+    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all())
+
     class Meta:
         model = CandidatesApplied
         fields = (
@@ -54,7 +53,7 @@ class CandidatesAppliedSerializer(serializers.ModelSerializer):
         # Resume existences check
         if not hasattr(user, "user_profile") or not user.user_profile.resume:
             raise serializers.ValidationError(
-                "You have to upload a resume before applying for this job!."
+                {"error": "You have to upload a resume before applying for this job!."}
             )
 
         resume_url = user.user_profile.resume

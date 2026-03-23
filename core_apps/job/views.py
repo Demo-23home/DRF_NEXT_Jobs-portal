@@ -131,7 +131,9 @@ def apply_to_job(request, pk):
     job = get_object_or_404(Job, id=pk)
 
     if not user.user_profile:
-        return Response("You have to upload your resume before applying!.", status=400)
+        return Response(
+            {"error": "You have to upload your resume before applying!."}, status=400
+        )
 
     serializer = CandidatesAppliedSerializer(
         data={"job": job.id}, context={"request": request}
@@ -149,7 +151,7 @@ def apply_to_job(request, pk):
         serializer.save()
         return Response({"applied": True, "job_id": job.id}, status=200)
     else:
-        return Response(serializer.errors, status=400)
+        return Response({"error": serializer.errors}, status=400)
 
 
 @api_view(["GET"])
