@@ -9,7 +9,7 @@ mapboxgl.accessToken = process.env.MAP_BOX;
 const JobDetails = ({ job, candidates, access_token }) => {
   const { applyToJob, checkJobApplied, applied, clearErrors, error, loading } =
     useContext(JobContext);
-  const [isApplied, setIsApplied] = useState(false); 
+  const [isApplied, setIsApplied] = useState(false);
   // 1. Map logic
   useEffect(() => {
     if (!job?.point) return;
@@ -48,7 +48,6 @@ const JobDetails = ({ job, candidates, access_token }) => {
     fetchApplied();
   }, [job?.id, access_token]);
 
-  // 3. Error handling
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -60,6 +59,11 @@ const JobDetails = ({ job, candidates, access_token }) => {
     applyToJob(job.id);
     setIsApplied(true);
   };
+
+  const d1 = moment(job.last_date);
+  const d2 = moment(Date.now());
+
+  const isLastDatePassed = d1.diff(d2, "days") < 0 ? true : false;
 
   return (
     <div className="job-details-wrapper">
@@ -94,6 +98,7 @@ const JobDetails = ({ job, candidates, access_token }) => {
                       <button
                         onClick={applyToJobHandler}
                         className="btn btn-primary px-4 py-2 apply-btn"
+                        disabled={isLastDatePassed}
                       >
                         Apply Now
                       </button>
@@ -180,15 +185,16 @@ const JobDetails = ({ job, candidates, access_token }) => {
               <h5>Last Date:</h5>
               <p> {job.last_date.substring(0, 10)}</p>
             </div>
-
-            <div className="mt-5 p-0">
-              <div className="alert alert-danger">
-                <h5>Note:</h5>
-                You can no longer apply to this job. This job is expired. Last
-                date to apply for this job was: <b>15-2-2022</b>
-                <br /> Checkout others job on Jobbee.
+            {isLastDatePassed && (
+              <div className="mt-5 p-0">
+                <div className="alert alert-danger">
+                  <h5>Note:</h5>
+                  You can no longer apply to this job. This job is expired. Last
+                  date to apply for this job was: <b>{job.last_date.substring(0,10)}</b>
+                  <br /> Checkout others job on Jobbee.
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
