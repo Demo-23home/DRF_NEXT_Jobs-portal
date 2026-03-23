@@ -12,6 +12,7 @@ export const JobProvider = ({ children }) => {
 
   const router = useRouter();
 
+  // Apply to a job
   const applyToJob = async (id) => {
     try {
       setLoading(true);
@@ -24,6 +25,30 @@ export const JobProvider = ({ children }) => {
       }
     } catch (err) {
       setError(err?.response?.data?.message || "You must login first.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // check job applied
+  const checkJobApplied = async (id, access_token) => {
+    try {
+      setLoading(true);
+
+      const res = await axios.get(`/api/jobs/applied/${id}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      if (res.data === true) {
+        setApplied(true);
+      }
+
+      return res;
+    } catch (err) {
+      setError(err?.response?.data?.error || "An error occurred");
+      return { data: false }; // optional fallback
     } finally {
       setLoading(false);
     }
@@ -42,6 +67,7 @@ export const JobProvider = ({ children }) => {
         updated,
         applied,
         applyToJob,
+        checkJobApplied,
         setUpdated,
         clearErrors,
         setError,

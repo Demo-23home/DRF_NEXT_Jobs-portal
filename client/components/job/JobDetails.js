@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import moment from "moment";
 import mapboxgl from "mapbox-gl";
 import JobContext from "../../context/JobContext";
@@ -7,16 +7,18 @@ import { toast } from "react-toastify";
 mapboxgl.accessToken = process.env.MAP_BOX;
 
 const JobDetails = ({ job, candidates, access_token }) => {
-  const { applyToJob, applied, clearErrors, error, loading } =
+  const { applyToJob, checkJobApplied, applied, clearErrors, error, loading } =
     useContext(JobContext);
-
+  const [isApplied, setIsApplied] = useState(false); 
+  // 1. Map logic
   useEffect(() => {
-    // Parse the POINT string from backend: "SRID=4326;POINT (31.8144 31.4175)"
+    if (!job?.point) return;
+
     const coords = job.point
       .split("(")[1]
       .replace(")", "")
       .split(" ")
-      .map(Number); // convert strings to numbers
+      .map(Number);
 
     const [lng, lat] = coords;
 
@@ -27,9 +29,27 @@ const JobDetails = ({ job, candidates, access_token }) => {
       zoom: 17,
     });
 
-    // Correct method: setLngLat
     new mapboxgl.Marker().setLngLat([lng, lat]).addTo(map);
+  }, [job]);
 
+  // 2. API call
+  useEffect(() => {
+    if (!job?.id || !access_token) return;
+
+    const fetchApplied = async () => {
+      try {
+        const res = await checkJobApplied(job.id, access_token);
+        setIsApplied(res.data === true); // update local state
+      } catch (err) {
+        // optionally handle error
+      }
+    };
+
+    fetchApplied();
+  }, [job?.id, access_token]);
+
+  // 3. Error handling
+  useEffect(() => {
     if (error) {
       toast.error(error);
       clearErrors();
@@ -38,6 +58,7 @@ const JobDetails = ({ job, candidates, access_token }) => {
 
   const applyToJobHandler = () => {
     applyToJob(job.id);
+    setIsApplied(true);
   };
 
   return (
@@ -61,20 +82,20 @@ const JobDetails = ({ job, candidates, access_token }) => {
                   <span>
                     {loading ? (
                       "Loading..."
-                    ) : applied ? (
+                    ) : isApplied ? (
                       <button
                         disabled
                         className="btn btn-success px-4 py-2 apply-btn"
                       >
-                        <i aria-hidden className="fas fa-check"></i>
-                        {loading ? "Loading" : "Apply Now"}
+                        <i className="fas fa-check"></i>
+                        Applied
                       </button>
                     ) : (
                       <button
                         onClick={applyToJobHandler}
                         className="btn btn-primary px-4 py-2 apply-btn"
                       >
-                        {loading ? "Loading..." : "Apply Now"}
+                        Apply Now
                       </button>
                     )}
                     <span className="ml-4 text-success">
