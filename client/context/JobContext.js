@@ -25,7 +25,7 @@ export const JobProvider = ({ children }) => {
         setApplied(true);
       }
     } catch (err) {
-      setError(err?.response?.data?.message || "You must login first.");
+      setError(err?.message?.error?.data || "You must login first.");
     } finally {
       setLoading(false);
     }

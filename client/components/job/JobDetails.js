@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import moment from "moment";
 import mapboxgl from "mapbox-gl";
 import JobContext from "../../context/JobContext";
+import AuthContext from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
 mapboxgl.accessToken = process.env.MAP_BOX;
@@ -9,6 +10,9 @@ mapboxgl.accessToken = process.env.MAP_BOX;
 const JobDetails = ({ job, candidates, access_token }) => {
   const { applyToJob, checkJobApplied, applied, clearErrors, error, loading } =
     useContext(JobContext);
+
+  const { user } = useContext(AuthContext);
+
   const [isApplied, setIsApplied] = useState(false);
   // 1. Map logic
   useEffect(() => {
@@ -34,7 +38,7 @@ const JobDetails = ({ job, candidates, access_token }) => {
 
   // 2. API call
   useEffect(() => {
-    if (!job?.id || !access_token) return;
+    if (!job?.id || !access_token || !user) return;
 
     const fetchApplied = async () => {
       try {
@@ -46,7 +50,7 @@ const JobDetails = ({ job, candidates, access_token }) => {
     };
 
     fetchApplied();
-  }, [job?.id, access_token]);
+  }, [job?.id, access_token, user]);
 
   useEffect(() => {
     if (error) {
@@ -86,7 +90,7 @@ const JobDetails = ({ job, candidates, access_token }) => {
                   <span>
                     {loading ? (
                       "Loading..."
-                    ) : isApplied ? (
+                    ) : user && isApplied ? (
                       <button
                         disabled
                         className="btn btn-success px-4 py-2 apply-btn"
@@ -190,7 +194,8 @@ const JobDetails = ({ job, candidates, access_token }) => {
                 <div className="alert alert-danger">
                   <h5>Note:</h5>
                   You can no longer apply to this job. This job is expired. Last
-                  date to apply for this job was: <b>{job.last_date.substring(0,10)}</b>
+                  date to apply for this job was:{" "}
+                  <b>{job.last_date.substring(0, 10)}</b>
                   <br /> Checkout others job on Jobbee.
                 </div>
               </div>
