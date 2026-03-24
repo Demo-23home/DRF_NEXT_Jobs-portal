@@ -1,21 +1,16 @@
 import React from "react";
 
-const Footer = () => {
+const Loader = () => {
   return (
-    <footer className="py-1">
-      <p className="text-center mt-1">
-        Jobbee - 2021-2022, All Rights Reserved
-        <a
-          className="ml-4"
-          rel="noreferrer"
-          target="_blank"
-          href="https://storyset.com/people"
-        >
-          People illustrations by Storyset
-        </a>
-      </p>
-    </footer>
+    <div className="d-flex justify-content-center center-loader">
+      <div className="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
   );
 };
 
-export default Footer;
+export default Loader;

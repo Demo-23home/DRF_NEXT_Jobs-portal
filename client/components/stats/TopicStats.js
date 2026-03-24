@@ -2,11 +2,13 @@ import React, { useState, useContext, useEffect } from "react";
 
 import JobContext from "../../context/JobContext";
 import { toast } from "react-toastify";
+import Loader from "../layout/Loader";
 
 const TopicStats = () => {
   const [topic, setTopic] = useState("");
 
-  const { clearErrors, stats, error, loading } = useContext(JobContext);
+  const { clearErrors, stats, getTopicStats, error, loading } =
+    useContext(JobContext);
 
   useEffect(() => {
     if (error) {
@@ -17,7 +19,7 @@ const TopicStats = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(topic);
+    getTopicStats(topic);
   };
   return (
     <div className="modalMask">
@@ -35,7 +37,7 @@ const TopicStats = () => {
                     type="text"
                     placeholder="Enter Your Topic"
                     required
-                    value={stats}
+                    value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                   />
                 </div>
@@ -51,41 +53,49 @@ const TopicStats = () => {
         </div>
         <div className="right">
           <div className="rightContentWrapper">
-          {loading ? (
-            <Loader/>
-          ): <>
-            <h4>Stats of JAVA:</h4>
-            <table className="table table-striped mt-4">
-              <tbody>
-                <tr>
-                  <th scope="row">Average Positions</th>
-                  <td>2</td>
-                </tr>
-                <tr>
-                  <th scope="row">Total Jobs</th>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th scope="row">Minimum Salary</th>
-                  <td>75000</td>
-                </tr>
-                <tr>
-                  <th scope="row">Maximum Salary</th>
-                  <td>75000</td>
-                </tr>
-                <tr>
-                  <th scope="row">Average Salary</th>
-                  <td>75000</td>
-                </tr>
-              </tbody>
-            </table>
+            {loading ? (
+              <Loader />
+            ) : stats && stats.message ? (
+              <div className="alert alert-danger">
+                <b>{stats.message}</b>
+              </div>
+            ) : (
+              stats && (
+                <>
+                  <h4>Stats of {topic.toUpperCase()}:</h4>
+                  <table className="table table-striped mt-4">
+                    <tbody>
+                      <tr>
+                        <th scope="row">Average Positions</th>
+                        <td>{stats.avg_positions}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Total Jobs</th>
+                        <td>{stats.total_jobs}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Minimum Salary</th>
+                        <td>{stats.min_salary}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Maximum Salary</th>
+                        <td>{stats.max_salary}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Average Salary</th>
+                        <td>{stats.avg_salary}</td>
+                      </tr>
+                    </tbody>
+                  </table>
 
-            <div className="alert alert-danger mt-4">
-              <b>Note:</b> These stats are collected from the jobs that are
-              posted only on Jobbee. Do not compare these stats with other
-              sites.
-            </div>
-            </> }
+                  <div className="alert alert-danger mt-4">
+                    <b>Note:</b> These stats are collected from the jobs that
+                    are posted only on Jobbee. Do not compare these stats with
+                    other sites.
+                  </div>
+                </>
+              )
+            )}
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ export const JobProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [applied, setApplied] = useState(false);
   const [updated, setUpdated] = useState(null);
+  const [stats, setStats] = useState(null);
 
   const router = useRouter();
 
@@ -47,10 +48,25 @@ export const JobProvider = ({ children }) => {
 
       return res;
     } catch (err) {
-      setError(err?.response?.data?.error || "An error occurred");
+      setError(
+        err?.response?.data?.error || "An error occurred > checked jobs",
+      );
       return { data: false }; // optional fallback
     } finally {
       setLoading(false);
+    }
+  };
+
+  //? Get topic stats
+  const getTopicStats = async (topic) => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`/api/jobs/stats/${topic}/`);
+      setLoading(false);
+      setStats(res.data);
+    } catch (err) {
+      setLoading(false);
+      setError(err?.response?.data?.error || "An error occurred > stats");
     }
   };
 
@@ -67,6 +83,8 @@ export const JobProvider = ({ children }) => {
         updated,
         applied,
         applyToJob,
+        stats,
+        getTopicStats,
         checkJobApplied,
         setUpdated,
         clearErrors,

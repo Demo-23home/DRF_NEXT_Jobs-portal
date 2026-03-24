@@ -113,6 +113,9 @@ def get_topics_stats(request, topic):
     args = {"title__icontains": topic}
     jobs = Job.objects.filter(**args)
 
+    if  len(jobs) == 0:
+        return Response({"message": f"No stats found for {topic}!."})
+
     stats = jobs.aggregate(
         total_jobs=Count("title"),
         avg_positions=Avg("positions"),
