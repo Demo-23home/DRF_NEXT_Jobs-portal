@@ -14,7 +14,7 @@ class JobSerializer(serializers.ModelSerializer):
 
 
 class CandidatesAppliedSerializer(serializers.ModelSerializer):
-    job = serializers.PrimaryKeyRelatedField(queryset=Job.objects.all())
+    job = JobSerializer()
 
     class Meta:
         model = CandidatesApplied

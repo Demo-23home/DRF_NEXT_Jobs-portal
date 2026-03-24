@@ -1,13 +1,16 @@
 import { redirect } from "next/dist/server/api-utils";
 import Layout from "../../components/layout/Layout";
+import AppliedJobs from "../../components/job/AppliedJobs";
+
 import axios from "axios";
+
 
 import IsAuthenticatedUser from "../../utils/IsAuthenticated";
 export default function UserAppliedJobsPage({ jobs }) {
     console.log(jobs)
   return (
     <Layout title="Jobs Applied">
-      <h1>Jobs Applied</h1>
+      <AppliedJobs jobs={jobs}/>
     </Layout>
   );
 }
