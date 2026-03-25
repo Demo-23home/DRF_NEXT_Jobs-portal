@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import JobContext from "../../context/JobContext";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 import {
   jobTypeOptions,
@@ -24,15 +25,41 @@ const NewJob = ({ access_token }) => {
   const [positions, setPositions] = useState("");
   const [company, setCompany] = useState("");
 
-  const { clearErrors, error, loading } = useContext(JobContext);
+  const { clearErrors, error, loading, created, setCreated, createJob } =
+    useContext(JobContext);
+
+  const router = useRouter()
 
   useEffect(() => {
-    toast.error(error);
-    clearErrors();
-  }, [error]);
+    if (error) {
+      toast.error(error);
+      clearErrors();
+    }
+    if (created) {
+      setCreated(false);
+      toast.success("Job posted successfully.");
+      router.push("/")
+    }
+  }, [error, created]);
 
   const submitHandler = (e) => {
     e.preventDefault();
+
+    const isValidAddress = (address) => {
+      if (!address) return false;
+
+      const parts = address.split(",");
+      if (parts.length < 2) return false;
+
+      if (address.length < 10) return false;
+
+      return /[a-zA-Z]/.test(address);
+    };
+
+    if (!isValidAddress(address)) {
+      toast.error("Please enter a valid address (e.g. Street, City, Country)");
+      return;
+    }
 
     const data = {
       title,
@@ -47,8 +74,7 @@ const NewJob = ({ access_token }) => {
       positions,
       company,
     };
-    console.log(data)
-    // NewJob(data, access_token);
+    createJob(data, access_token);
   };
 
   return (
@@ -81,6 +107,8 @@ const NewJob = ({ access_token }) => {
                     type="text"
                     placeholder="Enter Job Description"
                     required
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                   />
                 </div>
                 <div className="inputBox">
@@ -151,7 +179,6 @@ const NewJob = ({ access_token }) => {
                         {option}
                       </option>
                     ))}
-                    <option>Business</option>
                   </select>
                 </div>
               </div>
@@ -169,7 +196,6 @@ const NewJob = ({ access_token }) => {
                         {option}
                       </option>
                     ))}
-                    <option>Masters</option>
                   </select>
                 </div>
               </div>
@@ -187,7 +213,6 @@ const NewJob = ({ access_token }) => {
                         {option}
                       </option>
                     ))}
-                    <option>Business</option>
                   </select>
                 </div>
               </div>
@@ -205,7 +230,6 @@ const NewJob = ({ access_token }) => {
                         {option}
                       </option>
                     ))}
-                    <option>No Experience</option>
                   </select>
                 </div>
               </div>

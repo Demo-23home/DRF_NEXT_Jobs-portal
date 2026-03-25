@@ -13,9 +13,8 @@ const IsAuthenticatedUser = async (access_token) => {
       return false;
     }
   } catch (error) {
-    console.log(error);
     return false;
   }
 };
 
-export default IsAuthenticatedUser; 
+export default IsAuthenticatedUser;

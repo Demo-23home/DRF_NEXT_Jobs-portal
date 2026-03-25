@@ -31,10 +31,10 @@ class Industry(models.TextChoices):
 
 
 class Experience(models.TextChoices):
-    NO_EXPERIENCE = "No experience"
+    NO_EXPERIENCE = "No Experience"
     ONE_YEAR = "1 Year"
-    TO_YEAR = "2 Year"
-    THREE_YEAR_PLUS = "3 Year above"
+    TO_YEAR = "2 Years"
+    THREE_YEAR_PLUS = "3 Years above"
 
 
 def return_date_time():
@@ -84,7 +84,7 @@ class Job(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self): 
+    def __str__(self):
         return f"{self.title} 'position' on {self.address}"
 
     def save(self, *args, **kwargs):

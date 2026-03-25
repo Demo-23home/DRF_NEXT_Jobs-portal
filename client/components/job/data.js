@@ -13,7 +13,7 @@ export const industriesOptions = [
 
 export const experienceOptions = [
   "No Experience",
-  "1 Years",
+  "1 Year",
   "2 Years",
   "3 Year+",
 ];

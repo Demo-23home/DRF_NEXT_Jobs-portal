@@ -1,6 +1,6 @@
 import { useState, createContext, useEffect } from "react";
-import { useRouter } from "next/router";
 import axios from "axios";
+import NewJob from "../components/job/NewJob";
 
 const JobContext = createContext();
 
@@ -8,11 +8,39 @@ export const JobProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [applied, setApplied] = useState(false);
+  const [created, setCreated] = useState(false);
   const [updated, setUpdated] = useState(null);
   const [stats, setStats] = useState(null);
 
-  const router = useRouter();
+  // Create new job
+  const createJob = async (data, access_token) => {
+    try {
+      setLoading(true);
+      setError(null);
 
+      const res = await axios.post(`/api/jobs/new/`, data, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      if (res.data) {
+        setApplied(true);
+        setCreated(true);
+      }
+    } catch (err) {
+      setError(
+        err?.response?.data?.detail ||
+          Object.values(err?.response?.data || {})
+            .flat()
+            .join(", ") ||
+          err?.message ||
+          "Something went wrong",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   // Apply to a job
   const applyToJob = async (id) => {
     try {
@@ -83,6 +111,9 @@ export const JobProvider = ({ children }) => {
         updated,
         applied,
         applyToJob,
+        createJob,
+        created,
+        setCreated,
         stats,
         getTopicStats,
         checkJobApplied,

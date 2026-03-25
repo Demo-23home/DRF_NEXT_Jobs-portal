@@ -152,7 +152,6 @@ export const AuthProvider = ({ children }) => {
       const message = err.response?.data?.error;
       setError(message);
 
-      console.log("LOGIN ERROR:", err.response?.data);
     }
   };
 

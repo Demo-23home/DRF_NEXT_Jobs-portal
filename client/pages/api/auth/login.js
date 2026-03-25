@@ -48,7 +48,6 @@ export default async function handler(req, res) {
       message: "Login successful",
     });
   } catch (error) {
-    console.log("API ERROR:", error.response?.data.message);
 
     return res.status(error.response?.status || 500).json({
       error: error.response?.data?.message,
