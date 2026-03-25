@@ -113,7 +113,7 @@ def get_topics_stats(request, topic):
     args = {"title__icontains": topic}
     jobs = Job.objects.filter(**args)
 
-    if  len(jobs) == 0:
+    if len(jobs) == 0:
         return Response({"message": f"No stats found for {topic}!."})
 
     stats = jobs.aggregate(
@@ -193,7 +193,7 @@ def user_created_jobs(request):
     jobs = Job.objects.filter(**args)
     serializer = JobSerializer(jobs, many=True)
 
-    return Response({"data": serializer.data}, status=200)
+    return Response(serializer.data, status=200)
 
 
 @api_view(["GET"])
