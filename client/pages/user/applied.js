@@ -7,7 +7,6 @@ import axios from "axios";
 
 import IsAuthenticatedUser from "../../utils/IsAuthenticated";
 export default function UserAppliedJobsPage({ jobs }) {
-    console.log(jobs)
   return (
     <Layout title="Jobs Applied">
       <AppliedJobs jobs={jobs}/>
