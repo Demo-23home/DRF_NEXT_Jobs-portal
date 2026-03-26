@@ -12,7 +12,7 @@ import {
   experienceOptions,
 } from "./data";
 
-const NewJob = ({ access_token }) => {
+const UpdateJob = ({ job, access_token }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [email, setEmail] = useState("");
@@ -25,24 +25,40 @@ const NewJob = ({ access_token }) => {
   const [positions, setPositions] = useState("");
   const [company, setCompany] = useState("");
 
-  const { clearErrors, error, loading, created, setCreated, createJob } =
+  const { clearErrors, error, loading, updated, setUpdated, updateJob } =
     useContext(JobContext);
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (job) {
+      setTitle(job.title || "");
+      setDescription(job.description || "");
+      setEmail(job.email || "");
+      setAddress(job.address || "");
+      setJobType(job.job_type || "Permanent");
+      setEducation(job.education || "Bachelors");
+      setIndustry(job.industry || "Business");
+      setExperience(job.experience || "No Experience");
+      setSalary(job.salary || "");
+      setPositions(job.positions || "");
+      setCompany(job.company || "");
+    }
+  }, [job]);
 
   useEffect(() => {
     if (error) {
       toast.error(error);
       clearErrors();
     }
-    if (created) {
-      setCreated(false);
-      toast.success("Job posted successfully.");
+    if (updated) {
+      setUpdated(false);
+      toast.success("Job updated successfully.");
       setTimeout(() => {
-        router.push("/");
+        router.push("/employer/jobs");
       }, 2000);
     }
-  }, [error, created]);
+  }, [error, updated]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -68,7 +84,7 @@ const NewJob = ({ access_token }) => {
       description,
       email,
       address,
-      jobType,
+      job_type: jobType,
       education,
       industry,
       experience,
@@ -76,7 +92,7 @@ const NewJob = ({ access_token }) => {
       positions,
       company,
     };
-    createJob(data, access_token);
+    updateJob(access_token, data, job.id);
   };
 
   return (
@@ -85,7 +101,7 @@ const NewJob = ({ access_token }) => {
         <div className="headerWrapper">
           <div className="headerLogoWrapper"></div>
           <h1>
-            <i aria-hidden className="fas fa-copy mr-2"></i> POST A JOB
+            <i aria-hidden className="fas fa-copy mr-2"></i> Update JOB
           </h1>
         </div>
         <form className="form" onSubmit={submitHandler}>
@@ -239,7 +255,7 @@ const NewJob = ({ access_token }) => {
 
             <div className="col text-center mt-3">
               <button className="createButton">
-                {loading ? "Posting..." : "Create Job"}
+                {loading ? "Updating..." : "Update Job"}
               </button>
             </div>
           </div>
@@ -249,4 +265,4 @@ const NewJob = ({ access_token }) => {
   );
 };
 
-export default NewJob;
+export default UpdateJob;

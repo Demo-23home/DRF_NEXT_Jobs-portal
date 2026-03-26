@@ -37,7 +37,6 @@ export async function getServerSideProps({ req }) {
     },
   );
   const jobs = res.data
-  console.log(jobs)
   return {
     props: {
       jobs,

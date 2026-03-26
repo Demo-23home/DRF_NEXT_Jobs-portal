@@ -41,6 +41,34 @@ export const JobProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+  // Update job
+  const updateJob = async (access_token, data, id) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.put(`/api/jobs/update/${id}/`, data, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+      if (res.data) {
+        setUpdated(true);
+      }
+    } catch (err) {
+      const errData = err?.response?.data;
+      const message =
+        errData?.error ||
+        errData?.detail ||
+        errData?.message ||
+        (typeof errData === "object" && JSON.stringify(errData)) || // dump full object
+        "An error occurred! >> job-update.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Apply to a job
   const applyToJob = async (id) => {
     try {
@@ -113,19 +141,21 @@ export const JobProvider = ({ children }) => {
     <JobContext.Provider
       value={{
         loading,
+        stats,
         error,
         updated,
         applied,
+        created,
+        updateJob,
+        clearErrors,
+        checkJobApplied,
         applyToJob,
         createJob,
-        created,
         setCreated,
-        stats,
-        getTopicStats,
-        checkJobApplied,
-        setUpdated,
-        clearErrors,
         setError,
+        setUpdated,
+        setUpdated,
+        getTopicStats,
       }}
     >
       {children}
