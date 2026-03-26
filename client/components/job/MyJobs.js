@@ -1,9 +1,15 @@
-import React from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import JobContext from "../../context/JobContext";
+import { useContext } from "react";
+
 const DataTable = dynamic(() => import("react-data-table-component"), {
   ssr: false,
 });
+
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const MyJobs = ({ jobs, access_token }) => {
   const columns = [
@@ -13,7 +19,27 @@ const MyJobs = ({ jobs, access_token }) => {
     { name: "Action", sortable: true, selector: (row) => row.action },
   ];
 
+  const { clearErrors, error, loading, deleted, setDeleted, deleteJob } =
+    useContext(JobContext);
+
+  const router = useRouter();
+
   const data = [];
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      clearErrors();
+    }
+    if (deleted) {
+      setDeleted(false);
+      router.reload(router.asPath);
+    }
+  }, [error, deleted]);
+
+  const deleteJobHandler = (id) => {
+    deleteJob(id, access_token);
+  };
 
   jobs &&
     jobs.forEach((job) => {
@@ -38,7 +64,10 @@ const MyJobs = ({ jobs, access_token }) => {
                 <i aria-hidden className="fa fa-pencil"></i>
               </a>
             </Link>
-            <button className="btn btn-danger mx-1">
+            <button
+              className="btn btn-danger mx-1"
+              onClick={() => deleteJobHandler(job.id)}
+            >
               <i className="fa fa-trash"></i>
             </button>
           </>

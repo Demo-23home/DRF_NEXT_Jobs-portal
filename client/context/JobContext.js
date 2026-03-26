@@ -1,6 +1,5 @@
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext } from "react";
 import axios from "axios";
-import NewJob from "../components/job/NewJob";
 
 const JobContext = createContext();
 
@@ -10,6 +9,7 @@ export const JobProvider = ({ children }) => {
   const [applied, setApplied] = useState(false);
   const [created, setCreated] = useState(false);
   const [updated, setUpdated] = useState(null);
+  const [deleted, setDeleted] = useState(null);
   const [stats, setStats] = useState(null);
 
   // Create new job
@@ -61,7 +61,7 @@ export const JobProvider = ({ children }) => {
         errData?.error ||
         errData?.detail ||
         errData?.message ||
-        (typeof errData === "object" && JSON.stringify(errData)) || // dump full object
+        (typeof errData === "object" && JSON.stringify(errData)) ||
         "An error occurred! >> job-update.";
       setError(message);
     } finally {
@@ -77,7 +77,7 @@ export const JobProvider = ({ children }) => {
       const res = await axios.post(`/api/jobs/apply/${id}`);
       if (res.data?.applied) {
         setApplied(true);
-        return true; // signal success
+        return true;
       }
     } catch (err) {
       const data = err?.response?.data;
@@ -89,10 +89,34 @@ export const JobProvider = ({ children }) => {
       setError(message);
       return false;
     } finally {
-      setLoading(false); // this was missing!
+      setLoading(false);
     }
   };
-
+  // Apply to a job
+  const deleteJob = async (id, access_token) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.delete(`/api/jobs/delete/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+      setDeleted(true);
+      setLoading(false);
+    } catch (err) {
+      const data = err?.response?.data;
+      const message =
+        data?.error ||
+        data?.detail ||
+        data?.message ||
+        "An error occurred! >> job-apply.";
+      setError(message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
   // check job applied
   const checkJobApplied = async (id, access_token) => {
     try {
@@ -113,7 +137,7 @@ export const JobProvider = ({ children }) => {
       setError(
         err?.response?.data?.error || "An error occurred > checked jobs",
       );
-      return { data: false }; // optional fallback
+      return { data: false };
     } finally {
       setLoading(false);
     }
@@ -146,7 +170,9 @@ export const JobProvider = ({ children }) => {
         updated,
         applied,
         created,
+        deleted,
         updateJob,
+        deleteJob,
         clearErrors,
         checkJobApplied,
         applyToJob,
@@ -154,7 +180,7 @@ export const JobProvider = ({ children }) => {
         setCreated,
         setError,
         setUpdated,
-        setUpdated,
+        setDeleted,
         getTopicStats,
       }}
     >
