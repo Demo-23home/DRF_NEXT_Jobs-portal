@@ -52,10 +52,14 @@ class CandidatesAppliedWriteSerializer(serializers.ModelSerializer):
 
 class CandidatesAppliedReadSerializer(serializers.ModelSerializer):
     job = JobSerializer()  # nested, full job object
-
+    user = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = CandidatesApplied
         fields = ("user", "resume", "applied_at", "job")
+
+
+    def get_user(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
 
     def create(self, validated_data):
         request = self.context["request"]

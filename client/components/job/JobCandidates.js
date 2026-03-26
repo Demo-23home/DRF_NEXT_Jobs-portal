@@ -9,7 +9,7 @@ const DataTable = dynamic(() => import("react-data-table-component"), {
 const JobCandidates = ({ candidates_applied }) => {
   const columns = [
     { name: "Job Title", sortable: true, selector: (row) => row.title },
-    { name: "User ID", sortable: true, selector: (row) => row.user },
+    { name: "User's name", sortable: true, selector: (row) => row.user },
     { name: "Resume", selector: (row) => row.resume },
     { name: "Applied At", sortable: true, selector: (row) => row.applied_at },
   ];
