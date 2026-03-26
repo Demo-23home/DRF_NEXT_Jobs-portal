@@ -46,16 +46,22 @@ export const JobProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-
       const res = await axios.post(`/api/jobs/apply/${id}`);
-
       if (res.data?.applied) {
         setApplied(true);
+        return true; // signal success
       }
     } catch (err) {
-      setError(err?.message?.error?.data || "You must login first.");
+      const data = err?.response?.data;
+      const message =
+        data?.error ||
+        data?.detail ||
+        data?.message ||
+        "An error occurred! >> job-apply.";
+      setError(message);
+      return false;
     } finally {
-      setLoading(false);
+      setLoading(false); // this was missing!
     }
   };
 

@@ -28,6 +28,9 @@ const UploadResume = ({ access_token }) => {
     if (uploaded) {
       setUploaded(false);
       toast.success("Your Resume has been uploaded");
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     }
   }, [uploaded, error]);
 

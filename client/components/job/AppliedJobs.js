@@ -1,9 +1,12 @@
 import React from "react";
-
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import DataTable from "react-data-table-component";
 
-const AppliedJobs = ({jobs}) => {
+const DataTable = dynamic(() => import("react-data-table-component"), {
+  ssr: false,
+});
+
+const AppliedJobs = ({ jobs }) => {
   const columns = [
     { name: "Job name", sortable: true, selector: (row) => row.title },
     { name: "Salary", sortable: true, selector: (row) => row.salary },
@@ -24,12 +27,12 @@ const AppliedJobs = ({jobs}) => {
         experience: item.job.experience,
         applied_at: item.applied_at.substring(0, 10),
         action: (
-            <Link legacyBehavior href={`/job/${item.job.id}`}>
-                <a className="btn btn-primary">
-                    <i aria-hidden className="fa fa-eye"></i>
-                </a>
-            </Link>
-        )
+          <Link legacyBehavior href={`/job/${item.job.id}`}>
+            <a className="btn btn-primary">
+              <i aria-hidden className="fa fa-eye"></i>
+            </a>
+          </Link>
+        ),
       });
     });
   return (

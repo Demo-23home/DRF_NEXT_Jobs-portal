@@ -59,9 +59,11 @@ const JobDetails = ({ job, candidates, access_token }) => {
     }
   }, [error]);
 
-  const applyToJobHandler = () => {
-    applyToJob(job.id);
-    setIsApplied(true);
+  const applyToJobHandler = async () => {
+    const success = await applyToJob(job.id);
+    if (success) {
+      setIsApplied(true);
+    }
   };
 
   const d1 = moment(job.last_date);

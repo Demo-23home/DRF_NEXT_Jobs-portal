@@ -7,7 +7,6 @@ export default async function handler(req, res) {
 
   try {
     const { id } = req.query;
-
     const token = req.cookies.access;
 
     const response = await axios.post(
@@ -15,16 +14,19 @@ export default async function handler(req, res) {
       {},
       {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
-      },
+      }
     );
 
     return res.status(200).json(response.data);
   } catch (error) {
-    return res.status(error.response?.status || 500).json({
-      message:
-        error.response?.data?.error ||
-        error.response?.data?.detail ||
-        "Something went wrong",
-    });
+    const status = error.response?.status || 500;
+    const data = error.response?.data;
+
+    // Forward the full Django error body as-is
+    if (data && typeof data === "object") {
+      return res.status(status).json(data);
+    }
+
+    return res.status(status).json({ error: "Something went wrong" });
   }
 }

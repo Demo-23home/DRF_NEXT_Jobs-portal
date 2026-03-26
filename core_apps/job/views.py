@@ -1,5 +1,9 @@
 from datetime import timezone
-from .serializers import JobSerializer, CandidatesAppliedSerializer
+from .serializers import (
+    JobSerializer,
+    CandidatesAppliedReadSerializer,
+    CandidatesAppliedWriteSerializer,
+)
 from .models import CandidatesApplied, Job
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -133,28 +137,20 @@ def apply_to_job(request, pk):
     user = request.user
     job = get_object_or_404(Job, id=pk)
 
-    if not user.user_profile:
+    if not hasattr(user, "user_profile") or not user.user_profile:
         return Response(
-            {"error": "You have to upload your resume before applying!."}, status=400
+            {"error": "You have to upload your resume before applying."}, status=400
         )
 
-    serializer = CandidatesAppliedSerializer(
-        data={"job": job.id}, context={"request": request}
+    serializer = CandidatesAppliedWriteSerializer(
+        data={"job": pk}, context={"request": request}
     )
 
-    already_applied = job.candidates_applied.filter(user=user).exists()
-
-    if already_applied:
-        return Response(
-            {"error": "you have already applied for this position"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    if serializer.is_valid(raise_exception=True):
+    if serializer.is_valid():
         serializer.save()
         return Response({"applied": True, "job_id": job.id}, status=200)
-    else:
-        return Response({"error": serializer.errors}, status=400)
+
+    return Response({"error": serializer.errors}, status=400)
 
 
 @api_view(["GET"])
@@ -167,7 +163,7 @@ def list_user_applications(request):
     if not applications:
         return Response("You didn't apply to any jobs yet!.")
 
-    serializer = CandidatesAppliedSerializer(applications, many=True)
+    serializer = CandidatesAppliedReadSerializer(applications, many=True)
 
     return Response(serializer.data, status=200)
 
@@ -207,6 +203,6 @@ def candidates_applied(request, pk):
 
     candidates = job.candidates_applied.all()
 
-    serializer = CandidatesAppliedSerializer(candidates, many=True)
+    serializer = CandidatesAppliedReadSerializer(candidates, many=True)
 
     return Response(serializer.data, status=200)
